@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaProject.Domain", "PaparaProject.Domain\PaparaProject.Domain.csproj", "{02FDB891-F13D-4413-A76F-8CD0B7329125}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaparaProject.Domain", "PaparaProject.Domain\PaparaProject.Domain.csproj", "{02FDB891-F13D-4413-A76F-8CD0B7329125}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaProject.Persistence", "PaparaProject.Persistence\PaparaProject.Persistence.csproj", "{25A3436B-A486-4788-A4E2-D1A718392D94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaparaProject.Persistence", "PaparaProject.Persistence\PaparaProject.Persistence.csproj", "{25A3436B-A486-4788-A4E2-D1A718392D94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaProject.Application", "PaparaProject.Application\PaparaProject.Application.csproj", "{012B9D68-DC48-49BD-BC15-A59B750F31BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaparaProject.Application", "PaparaProject.Application\PaparaProject.Application.csproj", "{012B9D68-DC48-49BD-BC15-A59B750F31BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaProject.WebAPI", "PaparaProject.WebAPI\PaparaProject.WebAPI.csproj", "{95C8EFEC-A62C-4D46-8647-05A517847F25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PaparaProject.WebAPI", "PaparaProject.WebAPI\PaparaProject.WebAPI.csproj", "{95C8EFEC-A62C-4D46-8647-05A517847F25}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{7352BDF1-3F21-49A6-BE43-1D585DF40F71}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleUI", "ConsoleUI\ConsoleUI.csproj", "{7352BDF1-3F21-49A6-BE43-1D585DF40F71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaparaProject.Infrastructure", "PaparaProject.Infrastructure\PaparaProject.Infrastructure.csproj", "{79643507-53DD-4E22-897F-7931E3F062F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{7352BDF1-3F21-49A6-BE43-1D585DF40F71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7352BDF1-3F21-49A6-BE43-1D585DF40F71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7352BDF1-3F21-49A6-BE43-1D585DF40F71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79643507-53DD-4E22-897F-7931E3F062F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79643507-53DD-4E22-897F-7931E3F062F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79643507-53DD-4E22-897F-7931E3F062F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79643507-53DD-4E22-897F-7931E3F062F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

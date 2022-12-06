@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PaparaProject.Application.Interfaces.Services
+namespace PaparaProject.Application.Dtos
 {
-    public interface IDuesService
+    public class InvoiceTypeDto
     {
-      
     }
 }
