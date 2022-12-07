@@ -8,5 +8,6 @@ namespace PaparaProject.Application.Dtos
 {
     public class InvoiceTypeDto
     {
+        public string InvoiceTypeName { get; set; }
     }
 }

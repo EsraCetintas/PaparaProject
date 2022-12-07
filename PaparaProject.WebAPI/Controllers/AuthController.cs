@@ -27,18 +27,22 @@ namespace PaparaProject.WebAPI.Controllers
         public IActionResult Login(UserLoginDto userLoginDto)
         {
             var userToLogin = _authService.Login(userLoginDto).Result;
-            if (userToLogin == null)
+            if (!userToLogin.Success)
             {
-                return BadRequest(new APIResult { Message = "", Success = false, Data = null });
+                return NotFound(userToLogin);
             }
 
-            var result = _tokenService.CreateAccessToken(userToLogin);
-            return Ok(new APIResult
+            else
             {
-                Message = "",
-                Success = true,
-                Data = result
-            });
+                var result = _tokenService.CreateAccessToken((User)userToLogin.Data);
+                return Ok(new APIResult
+                {
+                    Message = "",
+                    Success = true,
+                    Data = result
+                });
+            }
+           
         }
 
         [HttpPost("register")]
@@ -47,19 +51,23 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Register(UserRegisterDto userRegisterDto)
         {
-            var userExists = _authService.UserExists(userRegisterDto.EMail);
-            if (userExists == null)
+            var userExists = _authService.UserExists(userRegisterDto.EMail).Result;
+            if (userExists == true)
             {
-                return BadRequest(new APIResult { Message = "", Success = false, Data = null});
+                return BadRequest(new APIResult { Message = "user already registered", Success = false, Data = null});
             }
 
-            var registerResult = _authService.Register(userRegisterDto).Result;
-            var result = _tokenService.CreateAccessToken(registerResult);
-            return Ok(new APIResult {
-                Message = "",
-                Success = true,
-                Data= result
-            });
+            else
+            {
+                var registerResult = _authService.Register(userRegisterDto).Result;
+                var result = _tokenService.CreateAccessToken((User)registerResult.Data);
+                return Ok(new APIResult
+                {
+                    Message = "Register Successful",
+                    Success = true,
+                    Data = result
+                });
+            }
         }
     }
 }

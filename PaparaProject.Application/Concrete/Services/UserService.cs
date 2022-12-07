@@ -1,5 +1,8 @@
-﻿using PaparaProject.Application.Interfaces.Persistence.Repositories;
+﻿using AutoMapper;
+using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
+using PaparaProject.Application.Utilities.Results;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,40 +15,85 @@ namespace PaparaProject.Application.Concrete.Services
     public class UserService : IUserService
     {
         readonly IUserRepository _repository;
+        readonly IMapper _mapper;
 
-        public UserService(IUserRepository repository)
+        public UserService(IUserRepository repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task AddAsync(User user)
+        public async Task<APIResult> AddAsync(UserDto userDto)
         {
-           await _repository.AddAsync(user);
+            var user = _mapper.Map<User>(userDto);
+            await _repository.AddAsync(user);
+            return new APIResult { Success = true, Message = "User Added", Data = user };
         }
 
-        public Task DeleteAsync(User user)
+        public async Task<APIResult> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var result = await GetByIdAsync(id);
+            if (result.Success)
+            {
+                await _repository.DeleteAsync((User)result.Data);
+                result.Data = null;
+                result.Message = "User deleted";
+                return result;
+            }
+
+            else return result;
         }
 
-        public Task<List<User>> GetAllAsync()
+        public async Task<APIResult> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var users = await _repository.GetAllAsync();
+            var result = _mapper.Map<List<UserDto>>(users);
+            return new APIResult { Success = true, Message = "Bringed", Data = result };
         }
 
-        public Task<User> GetByIdAsync(int id)
+        public async Task<APIResult> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var result = await _repository.GetAsync(p => p.Id == id);
+            if (result is null)
+            {
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            }
+            else
+            {
+                var user = _mapper.Map<UserDto>(result);
+                return new APIResult { Success = true, Message = "Found", Data = user };
+            }
         }
 
-        public async Task<User> GetByMailAsync(string email)
+        public async Task<APIResult> GetByMailAsync(string email)
         {
-           return await _repository.GetAsync(u => u.EMail == email);
+           var result = await _repository.GetAsync(u => u.EMail == email);
+            if (result is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+
+            else return new APIResult { Success = true, Message = "Found", Data = result };
         }
 
-        public async Task UpdateAsync(User user)
+        public async Task<APIResult> UpdateAsync(int id, UserDto userDto)
         {
-            
+            var result = await GetByIdAsync(id);
+
+            if (result.Success)
+            {
+                User userToUpdate = (User)result.Data;
+                var user = _mapper.Map<User>(userDto);
+                user.Id = userToUpdate.Id;
+                user.LastUpdateAt = DateTime.Now;
+                user.IsDeleted = false;
+                user.CreatedDate = userToUpdate.CreatedDate;
+                await _repository.UpdateAsync(user);
+                result.Message = "Updated";
+                result.Data = user;
+
+                return result;
+            }
+
+            else return result;
         }
     }
 }

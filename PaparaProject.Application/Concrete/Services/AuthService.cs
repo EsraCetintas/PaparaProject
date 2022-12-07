@@ -1,5 +1,7 @@
-﻿using PaparaProject.Application.Dtos;
+﻿using AutoMapper;
+using PaparaProject.Application.Dtos;
 using PaparaProject.Application.Interfaces.Services;
+using PaparaProject.Application.Utilities.Results;
 using PaparaProject.Application.Utilities.Security.Hashing;
 using PaparaProject.Application.Utilities.Security.JWT;
 using PaparaProject.Domain.Entities;
@@ -15,30 +17,28 @@ namespace PaparaProject.Application.Concrete.Services
     public class AuthService : IAuthService
     {
         readonly IUserService _userService;
-        readonly ITokenService _tokenHelper;
+        readonly IMapper _mapper;
 
-        public AuthService(IUserService userService, ITokenService tokenHelper)
+
+        public AuthService(IUserService userService, IMapper mapper)
         {
             _userService = userService;
-            _tokenHelper = tokenHelper;
+            _mapper = mapper;
         }
-        public async Task<User> Login(UserLoginDto userLoginDto)
+        public async Task<APIResult> Login(UserLoginDto userLoginDto)
         {
-            var userToCheck = await _userService.GetByMailAsync(userLoginDto.EMail);
-            if (userToCheck == null)
-            {
-                throw new Exception("Not Found");
-            }
+            var result = await _userService.GetByMailAsync(userLoginDto.EMail);
+            User user = (User)result.Data;
+            if (!result.Success)
+                return result;
 
-            if (!HashingHelper.VerifyPasswordHash(userLoginDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
-            {
-                throw new Exception("Password Invalid");
-            }
+            if (!HashingHelper.VerifyPasswordHash(userLoginDto.Password, user.PasswordHash, user.PasswordSalt))
+                return new APIResult { Success = false, Message = "Password Invalid", Data = null };
 
-            return userToCheck;
+            return new APIResult {Success = true, Message = "Login Succesfull", Data = _mapper.Map<User>(user) };
         }
 
-        public async Task<User> Register(UserRegisterDto userRegisterDto)
+        public async Task<APIResult> Register(UserRegisterDto userRegisterDto)
         {
             byte[] passwordHash, passwordSalt;
             HashingHelper.CreatePasswordHash(userRegisterDto.Password, out passwordHash, out passwordSalt);
@@ -50,13 +50,15 @@ namespace PaparaProject.Application.Concrete.Services
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
             };
-            await _userService.AddAsync(user);
-            return user;
+            var userDto = _mapper.Map<UserDto>(user);
+            await _userService.AddAsync(userDto);
+            return new APIResult { Success = true, Message = "Register Succesfull", Data = userDto };
         }
 
         public async Task<bool> UserExists(string email)
         {
-            if (await _userService.GetByMailAsync(email) != null)
+            var result = await _userService.GetByMailAsync(email);
+            if (!result.Success)
             {
                 return false;
             }

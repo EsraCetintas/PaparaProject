@@ -35,8 +35,7 @@ namespace PaparaProject.Persistence.Configurations
 
             builder.Property(p => p.PaymentDate)
                 .HasColumnName("PaymentDate")
-                .HasColumnType("datetime")
-                .IsRequired();
+                .HasColumnType("datetime");
 
             builder.Property(p => p.Deadline)
               .HasColumnName("Deadline")

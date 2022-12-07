@@ -8,5 +8,6 @@ namespace PaparaProject.Application.Dtos
 {
     public class FlatTypeDto
     {
+        public string FlatTypeName { get; set; }
     }
 }

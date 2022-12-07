@@ -8,5 +8,12 @@ namespace PaparaProject.Application.Dtos
 {
     public class UserDto
     {
+        public string Name { get; set; }
+        public string SurName { get; set; }
+        public string IdentityNo { get; set; }
+        public string EMail { get; set; }
+        public string PhoneNumber { get; set; }
+        public string? NumberPlate { get; set; }
+
     }
 }
