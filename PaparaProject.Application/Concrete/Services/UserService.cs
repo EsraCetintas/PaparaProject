@@ -26,6 +26,10 @@ namespace PaparaProject.Application.Concrete.Services
         public async Task<APIResult> AddAsync(UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
+            user.CreatedDate = DateTime.Now;
+            user.LastUpdateAt = DateTime.Now;
+            user.IsDeleted = false;
+            user.CreatedBy = 1;
             await _repository.AddAsync(user);
             return new APIResult { Success = true, Message = "User Added", Data = user };
         }
@@ -37,7 +41,7 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 await _repository.DeleteAsync((User)result.Data);
                 result.Data = null;
-                result.Message = "User deleted";
+                result.Message = "User Deleted";
                 return result;
             }
 
@@ -48,20 +52,18 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var users = await _repository.GetAllAsync();
             var result = _mapper.Map<List<UserDto>>(users);
-            return new APIResult { Success = true, Message = "Bringed", Data = result };
+            return new APIResult { Success = true, Message = "All Users Brought", Data = result };
         }
 
         public async Task<APIResult> GetByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
-            {
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
-            }
             else
             {
                 var user = _mapper.Map<UserDto>(result);
-                return new APIResult { Success = true, Message = "Found", Data = user };
+                return new APIResult { Success = true, Message = "By Id User Brought", Data = user };
             }
         }
 
@@ -71,7 +73,7 @@ namespace PaparaProject.Application.Concrete.Services
             if (result is null)
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-            else return new APIResult { Success = true, Message = "Found", Data = result };
+            else return new APIResult { Success = true, Message = "By Mail User Brought", Data = result };
         }
 
         public async Task<APIResult> UpdateAsync(int id, UserDto userDto)
@@ -84,10 +86,10 @@ namespace PaparaProject.Application.Concrete.Services
                 var user = _mapper.Map<User>(userDto);
                 user.Id = userToUpdate.Id;
                 user.LastUpdateAt = DateTime.Now;
-                user.IsDeleted = false;
+                user.IsDeleted = userToUpdate.IsDeleted;
                 user.CreatedDate = userToUpdate.CreatedDate;
                 await _repository.UpdateAsync(user);
-                result.Message = "Updated";
+                result.Message = "User Updated";
                 result.Data = user;
 
                 return result;

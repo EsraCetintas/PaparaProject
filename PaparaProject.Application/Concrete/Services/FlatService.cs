@@ -26,6 +26,10 @@ namespace PaparaProject.Application.Concrete.Services
         public async Task<APIResult> AddAsync(FlatDto flatDto)
         {
             var flat = _mapper.Map<Flat>(flatDto);
+            flat.CreatedDate = DateTime.Now;
+            flat.LastUpdateAt = DateTime.Now;
+            flat.IsDeleted = false;
+            flat.CreatedBy = 1;
             await _repository.AddAsync(flat);
             return new APIResult { Success = true, Message = "Flat Added", Data = flat };
         }
@@ -37,7 +41,7 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 await _repository.DeleteAsync((Flat)result.Data);
                 result.Data = null;
-                result.Message = "Flat deleted";
+                result.Message = "Flat Deleted";
                 return result;
             }
 
@@ -48,20 +52,18 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var flats = await _repository.GetAllAsync();
             var result = _mapper.Map<List<FlatDto>>(flats);
-            return new APIResult { Success = true, Message = "Bringed", Data = result };
+            return new APIResult { Success = true, Message = "All Flats Brought", Data = result };
         }
 
         public async Task<APIResult> GetByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
-            {
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
-            }
             else
             {
                 var dues = _mapper.Map<FlatDto>(result);
-                return new APIResult { Success = true, Message = "Found", Data = dues };
+                return new APIResult { Success = true, Message = "By Id Flat Brought", Data = dues };
             }
         }
 
@@ -76,10 +78,10 @@ namespace PaparaProject.Application.Concrete.Services
                 var flat = _mapper.Map<Flat>(flatDto);
                 flat.Id = flatToUpdate.Id;
                 flat.LastUpdateAt = DateTime.Now;
-                flat.IsDeleted = false;
+                flat.IsDeleted = flatToUpdate.IsDeleted;
                 flat.CreatedDate = flatToUpdate.CreatedDate;
                 await _repository.UpdateAsync(flat);
-                result.Message = "Updated";
+                result.Message = "Flat Updated";
                 result.Data = flat;
 
                 return result;

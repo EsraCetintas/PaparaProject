@@ -11,7 +11,7 @@ namespace PaparaProject.Application.Interfaces.Services
     public interface IDuesService
     {
         Task<APIResult> GetAllAsync();
-        Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid);
+        Task<APIResult> GetAllByPayFilterDuesAsync(bool isPaid);
         Task<APIResult> GetByIdAsync(int id);
         Task<APIResult> AddAsync(DuesDto duesDto);
         Task<APIResult> DeleteAsync(int id);

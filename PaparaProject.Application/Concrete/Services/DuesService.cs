@@ -25,6 +25,10 @@ namespace PaparaProject.Application.Concrete.Services
         public async Task<APIResult> AddAsync(DuesDto duesDto)
         {
             var dues = _mapper.Map<Dues>(duesDto);
+            dues.CreatedDate = DateTime.Now;
+            dues.LastUpdateAt = DateTime.Now;
+            dues.IsDeleted = false;
+            dues.CreatedBy = 1;
             await _repository.AddAsync(dues);
             return new APIResult { Success= true, Message= "Dues Added", Data=dues };
         }
@@ -36,7 +40,7 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 await _repository.DeleteAsync((Dues)result.Data);
                 result.Data = null;
-                result.Message = "Dues deleted";
+                result.Message = "Dues Deleted";
                 return result;
             }
 
@@ -48,38 +52,33 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var dues = await _repository.GetAllAsync();
             var result = _mapper.Map<List<DuesDto>>(dues);
-            return new APIResult { Success = true, Message = "Bringed", Data = result };
+            return new APIResult { Success = true, Message = "All Dues Brought", Data = result };
         }
 
-        public async Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid)
+        public async Task<APIResult> GetAllByPayFilterDuesAsync(bool isPaid)
         {
+            List<Dues> dues = null;
+
             if(isPaid)
-            {
-                var paidDues = await _repository.GetAllAsync(p => p.PaymentDate != null);
-                var result = _mapper.Map<List<DuesDto>>(paidDues);
-                return new APIResult { Success = true, Message = "Bringed", Data = result };
-            }
+                dues = await _repository.GetAllAsync(p => p.PaymentDate != null);
 
             else
-            {
-                var unPaidDues = await _repository.GetAllAsync(p => p.PaymentDate == null);
-                var result = _mapper.Map<List<DuesDto>>(unPaidDues);
-                return new APIResult { Success = true, Message = "Bringed", Data = result };
-            }
-           
+                dues = await _repository.GetAllAsync(p => p.PaymentDate == null);
+
+            var result = _mapper.Map<List<DuesDto>>(dues);
+            return new APIResult { Success = true, Message = "By Pay Filter Dues Brought", Data = result };
+
         }
 
         public async Task<APIResult> GetByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p=>p.Id== id);
             if (result is null)
-            {
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
-            }
             else
             {
                 var dues = _mapper.Map<DuesDto>(result);
-                return new APIResult { Success = true, Message = "Found", Data = dues };
+                return new APIResult { Success = true, Message = "By Id Dues Brought", Data = dues };
             }
         }
 
@@ -93,10 +92,10 @@ namespace PaparaProject.Application.Concrete.Services
                 var dues = _mapper.Map<Dues>(duesDto);
                 dues.Id = duesToUpdate.Id;
                 dues.LastUpdateAt = DateTime.Now;
-                dues.IsDeleted = false;
+                dues.IsDeleted = duesToUpdate.IsDeleted;
                 dues.CreatedDate = duesToUpdate.CreatedDate;
                 await _repository.UpdateAsync(dues);
-                result.Message = "Updated";
+                result.Message = "Dues Updated";
                 result.Data = dues;
 
                 return result;

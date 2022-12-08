@@ -31,6 +31,7 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<IUserRoleService, UserRoleService>();
             services.AddTransient<IUserService, UserService>();
+
             services.AddTransient<IAuthService, AuthService>();
 
             services.AddSingleton<ITokenService, TokenHandler>();

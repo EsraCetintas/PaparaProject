@@ -13,6 +13,7 @@ using PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions;
 using PaparaProject.WebAPI.Middlewares;
 using System.Reflection;
 using System.Text;
+using Hangfire;
 
 namespace PaparaProject.WebAPI
 {
@@ -82,11 +83,14 @@ namespace PaparaProject.WebAPI
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Connection")));
 
-            //IServiceCollection Extension
+            //IServiceCollection Extension For Injections
             services.ServiceRegistration();
 
             //For Profiles
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("Connection")));
+            services.AddHangfireServer();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,6 +108,7 @@ namespace PaparaProject.WebAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -112,6 +117,8 @@ namespace PaparaProject.WebAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseHangfireDashboard("/jobs");
         }
     }
 }

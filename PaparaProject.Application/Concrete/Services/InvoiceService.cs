@@ -26,6 +26,10 @@ namespace PaparaProject.Application.Concrete.Services
         public async Task<APIResult> AddAsync(InvoiceDto invoiceDto)
         {
             var invoice = _mapper.Map<Invoice>(invoiceDto);
+            invoice.CreatedDate = DateTime.Now;
+            invoice.LastUpdateAt = DateTime.Now;
+            invoice.IsDeleted = false;
+            invoice.CreatedBy = 1;
             await _repository.AddAsync(invoice);
             return new APIResult { Success = true, Message = "Invoice Added", Data = invoice };
         }
@@ -37,7 +41,7 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 await _repository.DeleteAsync((Invoice)result.Data);
                 result.Data = null;
-                result.Message = "Invoice deleted";
+                result.Message = "Invoice Deleted";
                 return result;
             }
 
@@ -48,44 +52,37 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var invoices = await _repository.GetAllAsync();
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
-            return new APIResult { Success = true, Message = "Bringed", Data = result };
+            return new APIResult { Success = true, Message = "All Invoices Brought", Data = result };
         }
 
         public async Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid)
         {
-            if(isPaid)
-            {
-                var paidInvoices = await _repository.GetAllAsync(p => p.PaymentDate != null);
-                var result = _mapper.Map<List<InvoiceDto>>(paidInvoices);
-                return new APIResult { Success = true, Message = "Bringed", Data = result };
-            }
+            List<Invoice> invoices = null;
 
+            if (isPaid)
+                 invoices = await _repository.GetAllAsync(p => p.PaymentDate != null);
             else
-            {
-                var unPaidInvoices = await _repository.GetAllAsync(p => p.PaymentDate == null);
-                var result = _mapper.Map<List<InvoiceDto>>(unPaidInvoices);
-                return new APIResult { Success = true, Message = "Bringed", Data = result };
-            }
+                 invoices = await _repository.GetAllAsync(p => p.PaymentDate == null);
+
+            var result = _mapper.Map<List<InvoiceDto>>(invoices);
+            return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
         }
 
         public async Task<APIResult> GetByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
-            {
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
-            }
             else
             {
-                var invoices = _mapper.Map<InvoiceDto>(result);
-                return new APIResult { Success = true, Message = "Found", Data = invoices };
+                var invoice = _mapper.Map<InvoiceDto>(result);
+                return new APIResult { Success = true, Message = "By Id Invoice Brought", Data = invoice };
             }
         }
 
         public async Task<APIResult> UpdateAsync(int id, InvoiceDto invoiceDto)
         {
             var result = await GetByIdAsync(id);
-            
 
             if (result.Success)
             {
@@ -93,12 +90,11 @@ namespace PaparaProject.Application.Concrete.Services
                 var invoice = _mapper.Map<Invoice>(invoiceDto);
                 invoice.Id = invoiceToUpdate.Id;
                 invoice.LastUpdateAt = DateTime.Now;
-                invoice.IsDeleted = false;
+                invoice.IsDeleted = invoiceToUpdate.IsDeleted;
                 invoice.CreatedDate = invoiceToUpdate.CreatedDate;
                 await _repository.UpdateAsync(invoice);
-                result.Message = "Updated";
+                result.Message = "Invoice Updated";
                 result.Data = invoice;
-
                 return result;
             }
 

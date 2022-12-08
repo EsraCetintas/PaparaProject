@@ -5,6 +5,7 @@ using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
 using PaparaProject.Application.Utilities.Security.JWT;
 using PaparaProject.Domain.Entities;
+using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
@@ -37,7 +38,7 @@ namespace PaparaProject.WebAPI.Controllers
                 var result = _tokenService.CreateAccessToken((User)userToLogin.Data);
                 return Ok(new APIResult
                 {
-                    Message = "",
+                    Message = userToLogin.Message,
                     Success = true,
                     Data = result
                 });
@@ -54,7 +55,7 @@ namespace PaparaProject.WebAPI.Controllers
             var userExists = _authService.UserExists(userRegisterDto.EMail).Result;
             if (userExists == true)
             {
-                return BadRequest(new APIResult { Message = "user already registered", Success = false, Data = null});
+                return BadRequest(new APIResult { Message = "User Already Registered", Success = false, Data = null});
             }
 
             else
@@ -69,5 +70,6 @@ namespace PaparaProject.WebAPI.Controllers
                 });
             }
         }
+
     }
 }

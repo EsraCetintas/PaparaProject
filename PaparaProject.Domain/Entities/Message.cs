@@ -12,5 +12,7 @@ namespace PaparaProject.Domain.Entities
         public string Context { get; set; }
         public bool IsReaded { get; set; }
         public bool IsNew { get; set; }
+
+        public User User { get; set; }
     }
 }

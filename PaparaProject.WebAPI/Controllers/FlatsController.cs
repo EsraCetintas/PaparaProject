@@ -9,11 +9,11 @@ namespace PaparaProject.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InvoiceTypesController : ControllerBase
+    public class FlatsController : ControllerBase
     {
-        readonly IInvoiceTypeService _service;
+        readonly IFlatService _service;
 
-        public InvoiceTypesController(IInvoiceTypeService service)
+        public FlatsController(IFlatService service)
         {
             _service = service;
         }
@@ -25,6 +25,7 @@ namespace PaparaProject.WebAPI.Controllers
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
+
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
@@ -42,9 +43,9 @@ namespace PaparaProject.WebAPI.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpPost("add")]
-        public async Task<IActionResult> Add(InvoiceTypeDto invoiceTypeDto)
+        public async Task<IActionResult> Add(FlatDto flatDto)
         {
-            var result = await _service.AddAsync(invoiceTypeDto);
+            var result = await _service.AddAsync(flatDto);
             return Ok(result);
         }
 
@@ -65,9 +66,9 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromQuery] int id, InvoiceTypeDto invoiceTypeDto)
+        public async Task<IActionResult> Update([FromQuery] int id, FlatDto flatDto)
         {
-            var result = await _service.UpdateAsync(id, invoiceTypeDto);
+            var result = await _service.UpdateAsync(id, flatDto);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);
