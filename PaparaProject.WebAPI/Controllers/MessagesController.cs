@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.MessageDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
 using System.Threading.Tasks;
@@ -50,9 +50,9 @@ namespace PaparaProject.WebAPI.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpPost("add")]
-        public async Task<IActionResult> Add(MessageDto messageDto)
+        public async Task<IActionResult> Add(MessageCreateDto messageCreateDto)
         {
-            var result = await _service.AddAsync(messageDto);
+            var result = await _service.AddAsync(messageCreateDto);
             return Ok(result);
         }
 
@@ -73,9 +73,9 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromQuery] int id, MessageDto messageDto)
+        public async Task<IActionResult> Update([FromQuery] int id, MessageCreateDto messageCreateDto)
         {
-            var result = await _service.UpdateAsync(id, messageDto);
+            var result = await _service.UpdateAsync(id, messageCreateDto);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);

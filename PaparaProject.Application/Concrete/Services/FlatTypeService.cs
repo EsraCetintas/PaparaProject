@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -52,8 +52,9 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var flatTypes = await _repository.GetAllAsync();
             var result = _mapper.Map<List<FlatTypeDto>>(flatTypes);
-            return new APIResult { Success = true, Message = "All Invoices Brought", Data = result };
+            return new APIResult { Success = true, Message = "All Flat Types Brought", Data = result };
         }
+
 
         public async Task<APIResult> GetByIdAsync(int id)
         {

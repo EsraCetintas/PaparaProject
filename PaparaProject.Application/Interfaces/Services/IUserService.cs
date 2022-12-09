@@ -1,4 +1,4 @@
-﻿using PaparaProject.Application.Dtos;
+﻿using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Utilities.Results;
 using PaparaProject.Domain.Entities;
 using System;

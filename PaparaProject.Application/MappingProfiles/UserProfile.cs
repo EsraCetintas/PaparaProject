@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;

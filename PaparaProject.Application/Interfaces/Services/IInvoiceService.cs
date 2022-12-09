@@ -1,4 +1,4 @@
-﻿using PaparaProject.Application.Dtos;
+﻿using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Utilities.Results;
 using System;
 using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace PaparaProject.Application.Interfaces.Services
         Task<APIResult> GetAllAsync();
         Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid);
         Task<APIResult> GetByIdAsync(int id);
-        Task<APIResult> AddAsync(InvoiceDto invoiceDto);
+        Task<APIResult> AddAsync(InvoiceCreateDto invoiceCreateDto);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, InvoiceDto invoiceDto);
+        Task<APIResult> UpdateAsync(int id, InvoiceCreateDto invoiceCreateDto);
     }
 }

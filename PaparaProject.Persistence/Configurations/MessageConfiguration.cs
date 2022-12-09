@@ -28,12 +28,12 @@ namespace PaparaProject.Persistence.Configurations
 
             builder.Property(p => p.IsReaded)
             .HasColumnName("IsReaded")
-            .HasColumnType("tinyint")
+            .HasColumnType("bit")
             .IsRequired();
 
             builder.Property(p => p.IsNew)
             .HasColumnName("IsNew")
-            .HasColumnType("tinyint")
+            .HasColumnType("bit")
             .IsRequired();
         }
     }

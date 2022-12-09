@@ -14,6 +14,10 @@ using PaparaProject.WebAPI.Middlewares;
 using System.Reflection;
 using System.Text;
 using Hangfire;
+using AutoMapper;
+using PaparaProject.Application.MappingProfiles;
+using Castle.DynamicProxy;
+using PaparaProject.Application.Utilities.Interceptors;
 
 namespace PaparaProject.WebAPI
 {
@@ -87,10 +91,24 @@ namespace PaparaProject.WebAPI
             services.ServiceRegistration();
 
             //For Profiles
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new DuesProfile());
+                mc.AddProfile(new FlatProfile());
+                mc.AddProfile(new FlatTypeProfile());
+                mc.AddProfile(new InvoiceProfile());
+                mc.AddProfile(new InvoiceTypeProfile());
+                mc.AddProfile(new MessageProfile());
+                mc.AddProfile(new UserProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
 
             services.AddHangfire(x => x.UseSqlServerStorage(Configuration.GetConnectionString("Connection")));
             services.AddHangfireServer();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

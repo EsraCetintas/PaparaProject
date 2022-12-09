@@ -1,4 +1,4 @@
-﻿using PaparaProject.Application.Dtos;
+﻿using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Application.Utilities.Results;
 using System;
 using System.Collections.Generic;

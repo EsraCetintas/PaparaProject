@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Application.ValidationRules.FluentValidation;
+using PaparaProject.WebAPI.Filters.Validation;
 using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
@@ -39,7 +41,7 @@ namespace PaparaProject.WebAPI.Controllers
         }
 
 
-
+        [Validation(typeof(FlatTypeValidator))]
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpPost("add")]

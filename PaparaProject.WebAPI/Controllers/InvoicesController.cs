@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
 using System.Threading.Tasks;
@@ -49,9 +49,9 @@ namespace PaparaProject.WebAPI.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpPost("add")]
-        public async Task<IActionResult> Add(InvoiceDto invoiceDto)
+        public async Task<IActionResult> Add(InvoiceCreateDto invoiceCreateDto)
         {
-            var result = await _service.AddAsync(invoiceDto);
+            var result = await _service.AddAsync(invoiceCreateDto);
             return Ok(result);
         }
 
@@ -72,9 +72,9 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromQuery] int id, InvoiceDto invoiceDto)
+        public async Task<IActionResult> Update([FromQuery] int id, InvoiceCreateDto invoiceCreateDto)
         {
-            var result = await _service.UpdateAsync(id, invoiceDto);
+            var result = await _service.UpdateAsync(id, invoiceCreateDto);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);

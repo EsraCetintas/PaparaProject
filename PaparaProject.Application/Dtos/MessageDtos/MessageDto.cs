@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using PaparaProject.Application.Dtos.UserDtos;
 
-namespace PaparaProject.Application.Dtos
+namespace PaparaProject.Application.Dtos.MessageDtos
 {
     public class MessageDto
     {
@@ -14,6 +15,6 @@ namespace PaparaProject.Application.Dtos
         public bool IsReaded { get; set; }
         public bool IsNew { get; set; }
         public DateTime SendDate { get; set; }
-        public UserDto  UserDto { get; set; }
+        public UserDto UserDto { get; set; }
     }
 }

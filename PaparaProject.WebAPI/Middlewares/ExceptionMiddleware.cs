@@ -4,6 +4,8 @@ using System.Net;
 using System;
 using System.Threading.Tasks;
 using PaparaProject.Application.Utilities.Results;
+using Newtonsoft.Json;
+using System.Net.Http;
 
 namespace PaparaProject.WebAPI.Middlewares
 {
@@ -29,18 +31,19 @@ namespace PaparaProject.WebAPI.Middlewares
                 await HandleExceptionAsync(httpContext, ex);
             }
         }
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = context.Response.StatusCode;
-
-            await context.Response.WriteAsync(new APIResult()
+            var json = JsonConvert.SerializeObject(new APIResult()
             {
-                Message = exception.Message,
+                Message = exception.ToString(),
                 Success = false,
                 Data = exception.ToString()
 
-            }.ToString());
+            });
+
+          return context.Response.WriteAsync(json);
 
          }
     }

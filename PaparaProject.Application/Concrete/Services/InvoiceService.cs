@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -23,9 +23,9 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResult> AddAsync(InvoiceDto invoiceDto)
+        public async Task<APIResult> AddAsync(InvoiceCreateDto invoiceCreateDto)
         {
-            var invoice = _mapper.Map<Invoice>(invoiceDto);
+            var invoice = _mapper.Map<Invoice>(invoiceCreateDto);
             invoice.CreatedDate = DateTime.Now;
             invoice.LastUpdateAt = DateTime.Now;
             invoice.IsDeleted = false;
@@ -80,14 +80,14 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> UpdateAsync(int id, InvoiceDto invoiceDto)
+        public async Task<APIResult> UpdateAsync(int id, InvoiceCreateDto invoiceCreateDto)
         {
             var result = await GetByIdAsync(id);
 
             if (result.Success)
             {
                 Invoice invoiceToUpdate = (Invoice)result.Data;
-                var invoice = _mapper.Map<Invoice>(invoiceDto);
+                var invoice = _mapper.Map<Invoice>(invoiceCreateDto);
                 invoice.Id = invoiceToUpdate.Id;
                 invoice.LastUpdateAt = DateTime.Now;
                 invoice.IsDeleted = invoiceToUpdate.IsDeleted;

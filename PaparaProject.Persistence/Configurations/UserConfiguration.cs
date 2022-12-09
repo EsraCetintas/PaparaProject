@@ -43,8 +43,15 @@ namespace PaparaProject.Persistence.Configurations
 
             builder.Property(p => p.NumberPlate)
             .HasColumnName("NumberPlate")
-            .HasColumnType("varchar(20)")
-            .IsRequired();
+            .HasColumnType("varchar(20)");
+
+            builder.Property(p => p.PasswordHash)
+            .HasColumnName("PasswordHash")
+            .HasColumnType("varbinary(MAX)");
+
+            builder.Property(p => p.PasswordSalt)
+            .HasColumnName("PasswordSalt")
+            .HasColumnType("varbinary(MAX)");
         }
     }
 }

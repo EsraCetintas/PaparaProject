@@ -1,4 +1,4 @@
-﻿using PaparaProject.Application.Dtos;
+﻿using PaparaProject.Application.Dtos.FlatDtos;
 using PaparaProject.Application.Utilities.Results;
 using System;
 using System.Collections.Generic;
@@ -12,9 +12,9 @@ namespace PaparaProject.Application.Interfaces.Services
     {
         Task<APIResult> GetAllAsync();
         Task<APIResult> GetByIdAsync(int id);
-        Task<APIResult> AddAsync(FlatDto flatDto);
+        Task<APIResult> AddAsync(FlatCreateDto flatCreateDto);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, FlatDto flatDto);
+        Task<APIResult> UpdateAsync(int id, FlatCreateDto flatCreateDto);
 
     }
 }

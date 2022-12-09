@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using PaparaProject.Application.Concrete.Services;
+using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Security.JWT;
+using PaparaProject.Infrastructure.Caching.Redis;
 using PaparaProject.Persistence.Repositories.EntityFramework;
 
 namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
@@ -21,6 +23,8 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IRoleRepository, EfRoleRepository>();
             services.AddScoped<IUserRepository, EfUserRepository>();
             services.AddScoped<IUserRoleRepository, EfUserRoleRepository>();
+            services.AddScoped<ICacheService, RedisCacheService>();
+            services.AddScoped<RedisServer>();
 
             services.AddTransient<IDuesService, DuesService>();
             services.AddTransient<IFlatService, FlatService>();

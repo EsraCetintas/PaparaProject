@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +14,8 @@ namespace PaparaProject.Application.MappingProfiles
         public InvoiceProfile()
         {
             CreateMap<Invoice, InvoiceDto>().ReverseMap();
+            CreateMap<Invoice, InvoiceCreateDto>().ReverseMap();
+
         }
     }
 }

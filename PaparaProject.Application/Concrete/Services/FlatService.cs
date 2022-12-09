@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.FlatDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -23,9 +23,9 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResult> AddAsync(FlatDto flatDto)
+        public async Task<APIResult> AddAsync(FlatCreateDto flatCreateDto)
         {
-            var flat = _mapper.Map<Flat>(flatDto);
+            var flat = _mapper.Map<Flat>(flatCreateDto);
             flat.CreatedDate = DateTime.Now;
             flat.LastUpdateAt = DateTime.Now;
             flat.IsDeleted = false;
@@ -67,7 +67,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> UpdateAsync(int id, FlatDto flatDto)
+        public async Task<APIResult> UpdateAsync(int id, FlatCreateDto flatCreateDto)
         {
             var result = await GetByIdAsync(id);
            
@@ -75,7 +75,7 @@ namespace PaparaProject.Application.Concrete.Services
             if (result.Success)
             {
                 Flat flatToUpdate = (Flat)result.Data;
-                var flat = _mapper.Map<Flat>(flatDto);
+                var flat = _mapper.Map<Flat>(flatCreateDto);
                 flat.Id = flatToUpdate.Id;
                 flat.LastUpdateAt = DateTime.Now;
                 flat.IsDeleted = flatToUpdate.IsDeleted;

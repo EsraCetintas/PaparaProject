@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.MessageDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -24,9 +24,9 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResult> AddAsync(MessageDto messageDto)
+        public async Task<APIResult> AddAsync(MessageCreateDto messageCreateDto)
         {
-            var message = _mapper.Map<Message>(messageDto);
+            var message = _mapper.Map<Message>(messageCreateDto);
             message.CreatedDate = DateTime.Now;
             message.LastUpdateAt = DateTime.Now;
             message.IsDeleted = false;
@@ -58,7 +58,7 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 message.IsNew = false;
                 int id = message.Id;
-                var messageDto = _mapper.Map<MessageDto>(message);
+                var messageDto = _mapper.Map<MessageCreateDto>(message);
                 await UpdateAsync(id, messageDto);
             }
 
@@ -86,21 +86,23 @@ namespace PaparaProject.Application.Concrete.Services
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
             else
             {
+                var messageToUpdate = result;
+                messageToUpdate.IsNew = false;
+                await UpdateAsync(messageToUpdate.Id, _mapper.Map<MessageCreateDto>(messageToUpdate));
                 var message = _mapper.Map<MessageDto>(result);
                 var apiResult = new APIResult { Success = true, Message = "By Id Message Brought", Data = message };
-                message.IsNew = false;
                 return apiResult;
             }
         }
 
-        public async Task<APIResult> UpdateAsync(int id, MessageDto messageDto)
+        public async Task<APIResult> UpdateAsync(int id, MessageCreateDto messageCreateDto)
         {
             var result = await GetByIdAsync(id);
 
             if (result.Success)
             {
                 Message messageToUpdate = (Message)result.Data;
-                var message = _mapper.Map<Message>(messageDto);
+                var message = _mapper.Map<Message>(messageCreateDto);
                 message.Id = messageToUpdate.Id;
                 message.LastUpdateAt = DateTime.Now;
                 message.IsDeleted = messageToUpdate.IsDeleted;

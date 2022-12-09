@@ -43,7 +43,7 @@ namespace PaparaProject.Persistence.Configurations
 
             builder.Property(p => p.FlatState)
             .HasColumnName("FlatState")
-            .HasColumnType("tinyint")
+            .HasColumnType("bit")
             .IsRequired();
 
             //Biz burda Bier-bir ilişki kurduk.

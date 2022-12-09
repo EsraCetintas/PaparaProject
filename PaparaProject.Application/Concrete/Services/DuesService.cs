@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.DuesDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -22,9 +22,9 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResult> AddAsync(DuesDto duesDto)
+        public async Task<APIResult> AddAsync(DuesCreateDto duesCreateDto)
         {
-            var dues = _mapper.Map<Dues>(duesDto);
+            var dues = _mapper.Map<Dues>(duesCreateDto);
             dues.CreatedDate = DateTime.Now;
             dues.LastUpdateAt = DateTime.Now;
             dues.IsDeleted = false;
@@ -82,14 +82,14 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> UpdateAsync(int id, DuesDto duesDto)
+        public async Task<APIResult> UpdateAsync(int id, DuesCreateDto duesCreateDto)
         {
             var result = await GetByIdAsync(id);
 
             if (result.Success)
             {
                 Dues duesToUpdate = (Dues)result.Data;
-                var dues = _mapper.Map<Dues>(duesDto);
+                var dues = _mapper.Map<Dues>(duesCreateDto);
                 dues.Id = duesToUpdate.Id;
                 dues.LastUpdateAt = DateTime.Now;
                 dues.IsDeleted = duesToUpdate.IsDeleted;

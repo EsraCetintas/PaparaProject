@@ -84,8 +84,8 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("FlatNo");
 
-                    b.Property<byte>("FlatState")
-                        .HasColumnType("tinyint")
+                    b.Property<bool>("FlatState")
+                        .HasColumnType("bit")
                         .HasColumnName("FlatState");
 
                     b.Property<int>("FlatTypeId")
@@ -243,12 +243,12 @@ namespace PaparaProject.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("IsNew")
-                        .HasColumnType("tinyint")
+                    b.Property<bool>("IsNew")
+                        .HasColumnType("bit")
                         .HasColumnName("IsNew");
 
-                    b.Property<byte>("IsReaded")
-                        .HasColumnType("tinyint")
+                    b.Property<bool>("IsReaded")
+                        .HasColumnType("bit")
                         .HasColumnName("IsReaded");
 
                     b.Property<DateTime?>("LastUpdateAt")
@@ -259,7 +259,12 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("Title");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -316,15 +321,16 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnName("Name");
 
                     b.Property<string>("NumberPlate")
-                        .IsRequired()
                         .HasColumnType("varchar(20)")
                         .HasColumnName("NumberPlate");
 
                     b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("varbinary(MAX)")
+                        .HasColumnName("PasswordHash");
 
                     b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("varbinary(MAX)")
+                        .HasColumnName("PasswordSalt");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -424,6 +430,15 @@ namespace PaparaProject.Persistence.Migrations
                     b.Navigation("Flat");
 
                     b.Navigation("InvoiceType");
+                });
+
+            modelBuilder.Entity("PaparaProject.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("PaparaProject.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("PaparaProject.Domain.Entities.UserRole", b =>

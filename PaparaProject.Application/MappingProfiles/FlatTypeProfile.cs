@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using PaparaProject.Application.Dtos;
+using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,8 @@ namespace PaparaProject.Application.MappingProfiles
     {
         public FlatTypeProfile()
         {
-            CreateMap<FlatType, FlatTypeDto>().ReverseMap();
+            CreateMap<FlatType, FlatTypeDto>().ForMember(x=>x.FlatTypeName, 
+                opt=>opt.MapFrom(x=>x.FlatTypeName)).ReverseMap();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using PaparaProject.Application.Dtos;
+﻿using PaparaProject.Application.Dtos.MessageDtos;
 using PaparaProject.Application.Utilities.Results;
 using System;
 using System.Collections.Generic;
@@ -13,8 +13,8 @@ namespace PaparaProject.Application.Interfaces.Services
         Task<APIResult> GetAllAsync();
         Task<APIResult> GetAllByReadFilterAsync(bool isReaded);
         Task<APIResult> GetByIdAsync(int id);
-        Task<APIResult> AddAsync(MessageDto messageDto);
+        Task<APIResult> AddAsync(MessageCreateDto messageCreateDto);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, MessageDto messageDto);
+        Task<APIResult> UpdateAsync(int id, MessageCreateDto messageCreateDto);
     }
 }
