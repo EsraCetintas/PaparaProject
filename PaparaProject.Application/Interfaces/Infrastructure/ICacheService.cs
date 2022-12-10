@@ -9,7 +9,7 @@ namespace PaparaProject.Application.Interfaces.Infrastructure
 {
     public interface ICacheService
     {
-        Task<APIResult> Get<APIResult>(string key);
+        Task<APIResult> Get(string key);
         void Add(string key, object data);
         void Remove(string key);
         void Clear();

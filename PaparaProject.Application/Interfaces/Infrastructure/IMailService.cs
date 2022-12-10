@@ -8,6 +8,6 @@ namespace PaparaProject.Application.Interfaces.Infrastructure
 {
     public interface IMailService
     {
-        Task SendMailAsync();
+        Task SendMailAsync(List<string> mailAdress);
     }
 }

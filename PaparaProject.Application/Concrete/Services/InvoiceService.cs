@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -52,9 +53,11 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> GetAllAsync()
         {
-            var invoices = await _repository.GetAllAsync();
+            var invoices = await _repository.GetAllAsync(includes: x => x.Include(x => x.Flat)
+            .ThenInclude(x => x.User)
+            .Include(x => x.InvoiceType));
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
-            return new APIResult { Success = true, Message = "All Invoices Brought", Data = result };
+            return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
         }
 
         public async Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid)
@@ -62,12 +65,26 @@ namespace PaparaProject.Application.Concrete.Services
             List<Invoice> invoices = null;
 
             if (isPaid)
-                 invoices = await _repository.GetAllAsync(p => p.PaymentDate != null);
+                 invoices = await _repository.GetAllAsync(p => p.PaymentDate != null, includes: x => x.Include(x => x.Flat)
+            .ThenInclude(x => x.User)
+            .Include(x => x.InvoiceType));
             else
-                 invoices = await _repository.GetAllAsync(p => p.PaymentDate == null);
+                 invoices = await _repository.GetAllAsync(p => p.PaymentDate == null, includes: x => x.Include(x => x.Flat)
+            .ThenInclude(x => x.User)
+            .Include(x => x.InvoiceType));
 
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
             return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
+        }
+
+        public async Task<List<InvoiceDto>> GetAllUnPaidInvoicesAsync()
+        {
+            var invoices = await _repository.GetAllAsync(p => p.PaymentDate == null,
+                includes: x => x.Include(x => x.Flat)
+                .ThenInclude(x => x.User)
+                .Include(x => x.InvoiceType));
+            var result = _mapper.Map<List<InvoiceDto>>(invoices);
+            return result;
         }
 
         public async Task<APIResult> GetByIdAsync(int id)

@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using PaparaProject.Application.Dtos.InvoiceDtos;
+using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Interfaces.Services;
+using PaparaProject.Application.Utilities.IoC;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Infrastructure.MailService;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
@@ -12,9 +17,11 @@ namespace PaparaProject.WebAPI.Controllers
     public class InvoicesController : ControllerBase
     {
         readonly IInvoiceService _service;
-        public InvoicesController(IInvoiceService service)
+        readonly IMailService _mailService;
+        public InvoicesController(IInvoiceService service, IMailService mailService)
         {
             _service = service;
+            _mailService = mailService; 
         }
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
@@ -29,7 +36,18 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getallbypayfilter")]
         public async Task<IActionResult> GetAllByPayFilterInvoicesAsync([FromQuery] bool isPaid)
         {
+            
             var result = await _service.GetAllByPayFilterInvoicesAsync(isPaid);
+            if(!isPaid)
+            {
+                List<string> mailAdress = new List<string>();
+                
+                foreach (var item in (List<InvoiceDto>)result.Data)
+                {
+                    mailAdress.Add(item.Flat.User.EMail);
+                }
+                _mailService.SendMailAsync(mailAdress);
+            }
             return Ok(result);
         }
 

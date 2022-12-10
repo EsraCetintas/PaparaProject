@@ -27,7 +27,7 @@ namespace PaparaProject.Application.Aspects.Autofac.Caching
             var key = string.Format($"{invocation.Method.ReflectedType.FullName}");
             if (_cacheService.Any(key))
             {
-                invocation.ReturnValue = _cacheService.Get<APIResult>(key);
+                invocation.ReturnValue = _cacheService.Get(key);
                 return;
             }
             invocation.Proceed();

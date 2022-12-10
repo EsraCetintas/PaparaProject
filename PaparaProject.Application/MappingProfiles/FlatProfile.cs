@@ -13,7 +13,7 @@ namespace PaparaProject.Application.MappingProfiles
     {
         public FlatProfile()
         {
-            CreateMap<Flat, FlatDto>().ReverseMap();
+            CreateMap<Flat, FlatDto>().ForMember(x=>x.User,opt=>opt.MapFrom(x=>x.User)).ReverseMap();
             CreateMap<Flat, FlatCreateDto>().ReverseMap();
 
         }

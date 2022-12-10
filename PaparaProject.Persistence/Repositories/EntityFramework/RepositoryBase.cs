@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.EntityFrameworkCore;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Domain.Entities;
 using PaparaProject.Persistence.Context.EntityFramework;
@@ -20,7 +21,7 @@ namespace PaparaProject.Persistence.Repositories.EntityFramework
         //{
         //    _unitOfWork = unitOfWork;
         //}
-
+        
         public async Task AddAsync(T entity)
         {
             using (TContext context = new TContext())
@@ -42,21 +43,40 @@ namespace PaparaProject.Persistence.Repositories.EntityFramework
             }
         }
 
-        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null)
+        public async Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null,
+             Func<IQueryable<T>, IQueryable<T>> includes = null)
         {
             using (TContext context = new TContext())
             {
-                return filter == null
-                    ? await context.Set<T>().ToListAsync()
-                    : await context.Set<T>().Where(filter).ToListAsync();
+                IQueryable<T> query = context.Set<T>();
+
+                if (filter != null)
+                {
+                    query = query.Where(filter);
+                }
+
+                if (includes != null)
+                {
+                    query = includes(query);
+                }
+
+                return await query.ToListAsync();
             }
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> filter,
+            Func<IQueryable<T>, IQueryable<T>> includes = null)
         {
             using (TContext context = new TContext())
             {
-                return await context.Set<T>().SingleOrDefaultAsync(filter);
+                var query = context.Set<T>().Where(filter);
+
+                if (includes != null)
+                {
+                    query = includes(query);
+                }
+
+                return await query.SingleOrDefaultAsync();
             }
         }
 

@@ -14,6 +14,6 @@ namespace PaparaProject.Application.Dtos.DuesDtos
         public DateTime PaymentDate { get; set; }
         public DateTime Deadline { get; set; }
 
-        public FlatDto FlatDto { get; set; }
+        public FlatDto Flat { get; set; }
     }
 }

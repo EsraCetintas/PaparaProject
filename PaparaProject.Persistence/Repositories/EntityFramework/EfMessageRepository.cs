@@ -1,4 +1,5 @@
-﻿using PaparaProject.Application.Interfaces.Persistence.Repositories;
+﻿using AutoMapper;
+using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Domain.Entities;
 using PaparaProject.Persistence.Context.EntityFramework;
 using System;
@@ -11,5 +12,6 @@ namespace PaparaProject.Persistence.Repositories.EntityFramework
 {
     public class EfMessageRepository : RepositoryBase<Message, AppDbContext>, IMessageRepository
     {
+
     }
 }

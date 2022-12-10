@@ -15,6 +15,6 @@ namespace PaparaProject.Application.Dtos.MessageDtos
         public bool IsReaded { get; set; }
         public bool IsNew { get; set; }
         public DateTime SendDate { get; set; }
-        public UserDto UserDto { get; set; }
+        public UserDto User { get; set; }
     }
 }

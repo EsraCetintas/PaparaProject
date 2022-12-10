@@ -6,6 +6,7 @@ using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.IoC;
 using PaparaProject.Application.Utilities.Security.JWT;
 using PaparaProject.Infrastructure.Caching.Redis;
+using PaparaProject.Infrastructure.MailService;
 using PaparaProject.Persistence.Repositories.EntityFramework;
 
 namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
@@ -26,6 +27,8 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IUserRoleRepository, EfUserRoleRepository>();
             services.AddScoped<ICacheService, RedisCacheService>();
             services.AddScoped<RedisServer>();
+
+            services.AddScoped<IMailService, MailService>();
 
             services.AddTransient<IDuesService, DuesService>();
             services.AddTransient<IFlatService, FlatService>();

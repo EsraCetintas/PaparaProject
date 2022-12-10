@@ -13,7 +13,7 @@ namespace PaparaProject.Application.MappingProfiles
     {
         public UserProfile()
         {
-            CreateMap<UserDto, UserDto>().ReverseMap();
+            CreateMap<User, UserDto>().ReverseMap();
         }
     }
 }

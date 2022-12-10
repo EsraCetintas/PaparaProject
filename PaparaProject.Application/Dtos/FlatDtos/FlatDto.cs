@@ -15,7 +15,7 @@ namespace PaparaProject.Application.Dtos.FlatDtos
         public string FlatNo { get; set; }
         public bool FlatState { get; set; }
 
-        public UserDto UserDto { get; set; }
-        public FlatTypeDto FlatTypeDto { get; set; }
+        public UserDto User { get; set; }
+        public FlatTypeDto FlatType { get; set; }
     }
 }

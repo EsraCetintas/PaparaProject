@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Utilities.IoC;
@@ -19,10 +20,10 @@ namespace PaparaProject.Infrastructure.Caching.Redis
         public RedisCacheService()
         {
             _redisServer = ServiceTool.ServiceProvider.GetService<RedisServer>();
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            };
+            //JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            //{
+            //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            //};
         }
 
       
@@ -38,14 +39,17 @@ namespace PaparaProject.Infrastructure.Caching.Redis
             return _redisServer.Database.KeyExists(key);
         }
 
-        public async Task<APIResult> Get<APIResult>(string key)
+        public async Task<APIResult> Get(string key)
         {
             if (Any(key))
             {
-
                string jsonData = await _redisServer.Database.StringGetAsync(key);
                 APIResult data = JsonConvert.DeserializeObject<APIResult>(jsonData);
-                return data;
+                return new APIResult { 
+                    Data = jsonData,
+                    Message = data.Message,
+                    Success = data.Success 
+                };
             }
 
             return default;

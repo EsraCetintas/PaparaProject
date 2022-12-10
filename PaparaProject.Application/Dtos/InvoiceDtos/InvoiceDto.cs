@@ -14,7 +14,7 @@ namespace PaparaProject.Application.Dtos.InvoiceDtos
         public DateTime PaymentDate { get; set; }
         public DateTime Deadline { get; set; }
 
-        public FlatDto FlatDto { get; set; }
-        public InvoiceTypeDto InvoiceTypeDto { get; set; }
+        public FlatDto Flat { get; set; }
+        public InvoiceTypeDto InvoiceType { get; set; }
     }
 }

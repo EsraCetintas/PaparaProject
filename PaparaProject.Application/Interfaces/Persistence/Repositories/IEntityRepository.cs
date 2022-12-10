@@ -9,8 +9,8 @@ namespace PaparaProject.Application.Interfaces.Persistence.Repositories
 {
     public interface IEntityRepository<T> where T : class
     {
-        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null);
-        Task<T> GetAsync(Expression<Func<T, bool>> filter);
+        Task<List<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, Func<IQueryable<T>, IQueryable<T>> includes = null);
+        Task<T> GetAsync(Expression<Func<T, bool>> filter, Func<IQueryable<T>, IQueryable<T>> includes = null);
         Task AddAsync(T entity);
         Task DeleteAsync(T entity);
         Task UpdateAsync(T entity);
