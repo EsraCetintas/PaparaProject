@@ -40,7 +40,10 @@ namespace PaparaProject.Application.Concrete.Services
             var result = await GetByIdAsync(id);
             if (result.Success)
             {
-                await _repository.DeleteAsync((Message)result.Data);
+
+                Message messageToDelete = _mapper.Map<Message>(result.Data);
+                messageToDelete.Id = id;
+                await _repository.DeleteAsync(messageToDelete);
                 result.Data = null;
                 result.Message = "Message Deleted";
                 return result;

@@ -39,7 +39,9 @@ namespace PaparaProject.Application.Concrete.Services
             var result = await GetByIdAsync(id);
             if (result.Success)
             {
-                await _repository.DeleteAsync((Invoice)result.Data);
+                Invoice invoiceToDelete = _mapper.Map<Invoice>(result.Data);
+                invoiceToDelete.Id = id;
+                await _repository.DeleteAsync(invoiceToDelete);
                 result.Data = null;
                 result.Message = "Invoice Deleted";
                 return result;

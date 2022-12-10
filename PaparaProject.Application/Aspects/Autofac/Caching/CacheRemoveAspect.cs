@@ -22,9 +22,7 @@ namespace PaparaProject.Application.Aspects.Autofac.Caching
 
         protected override void OnSuccess(IInvocation invocation)
         {
-            var methodName = string.Format($"{invocation.Method.ReflectedType.FullName}.{invocation.Method.Name}");
-            var arguments = invocation.Arguments.ToList();
-            var key = $"{methodName}({string.Join(",", arguments.Select(x => x?.ToString() ?? "<Null>"))})";
+            var key = string.Format($"{invocation.Method.ReflectedType.FullName}");
             _cacheService.Remove(key);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Application.ValidationRules.FluentValidation
 {
-    public class InvoiceValiator : AbstractValidator<Invoice>
+    public class InvoiceValiator : AbstractValidator<InvoiceCreateDto>
     {
         public InvoiceValiator()
         {

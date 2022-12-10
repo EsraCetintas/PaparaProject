@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Utilities.Interceptors;
 using PaparaProject.Application.Utilities.IoC;
+using PaparaProject.Application.Utilities.Results;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +19,15 @@ namespace PaparaProject.Application.Aspects.Autofac.Caching
         public CacheAspect()
         {
             _cacheService = ServiceTool.ServiceProvider.GetService<ICacheService>();
+
         }
 
         public override void Intercept(IInvocation invocation)
         {
-            var methodName = string.Format($"{invocation.Method.ReflectedType.FullName}.{invocation.Method.Name}");
-            var arguments = invocation.Arguments.ToList();
-            var key = $"{methodName}({string.Join(",", arguments.Select(x => x?.ToString() ?? "<Null>"))})";
+            var key = string.Format($"{invocation.Method.ReflectedType.FullName}");
             if (_cacheService.Any(key))
             {
-                invocation.ReturnValue = _cacheService.Get(key);
+                invocation.ReturnValue = _cacheService.Get<APIResult>(key);
                 return;
             }
             invocation.Proceed();

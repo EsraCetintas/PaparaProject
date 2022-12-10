@@ -39,7 +39,9 @@ namespace PaparaProject.Application.Concrete.Services
             var result = await GetByIdAsync(id);
             if (result.Success)
             {
-                await _repository.DeleteAsync((Flat)result.Data);
+                Flat flatToDelete = _mapper.Map<Flat>(result.Data);
+                flatToDelete.Id = id;
+                await _repository.DeleteAsync(flatToDelete);
                 result.Data = null;
                 result.Message = "Flat Deleted";
                 return result;

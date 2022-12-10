@@ -1,6 +1,8 @@
-﻿using FluentValidation;
+﻿using Castle.DynamicProxy;
+using FluentValidation;
 using PaparaProject.Application.Utilities.Results;
 using System;
+using System.Xml;
 
 namespace PaparaProject.WebAPI.Filters.Validation
 {
@@ -13,7 +15,8 @@ namespace PaparaProject.WebAPI.Filters.Validation
         /// <param name="items">Valide edilecek nesneler (Array)</param>
         public static void Validate(Type type, object[] items)
         {
-            //verilen tip ile validator oluşturma durumu kontrol ediliyor.
+           
+            ////verilen tip ile validator oluşturma durumu kontrol ediliyor.
             if (!typeof(IValidator).IsAssignableFrom(type))
                 throw new Exception("Hata: Validator tipi geçersiz!");
             var validator = (IValidator)Activator.CreateInstance(type);

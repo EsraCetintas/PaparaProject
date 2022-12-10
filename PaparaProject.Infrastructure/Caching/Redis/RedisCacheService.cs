@@ -1,5 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using PaparaProject.Application.Interfaces.Infrastructure;
+using PaparaProject.Application.Utilities.IoC;
+using PaparaProject.Application.Utilities.Results;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -13,14 +16,20 @@ namespace PaparaProject.Infrastructure.Caching.Redis
     {
         private RedisServer _redisServer;
 
-        public RedisCacheService(RedisServer redisServer)
+        public RedisCacheService()
         {
-            _redisServer = redisServer;
+            _redisServer = ServiceTool.ServiceProvider.GetService<RedisServer>();
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
         }
 
-        public void Add(string key, object data)
+      
+
+    public void Add(string key, object data)
         {
-            string jsonData = JsonConvert.SerializeObject(data);
+            string jsonData = JsonConvert.SerializeObject(data.GetType().GetProperty("Result").GetValue(data, null));
             _redisServer.Database.StringSet(key, jsonData);
         }
 
@@ -29,12 +38,14 @@ namespace PaparaProject.Infrastructure.Caching.Redis
             return _redisServer.Database.KeyExists(key);
         }
 
-        public object Get(string key)
+        public async Task<APIResult> Get<APIResult>(string key)
         {
             if (Any(key))
             {
-                string jsonData = _redisServer.Database.StringGet(key);
-                return JsonConvert.DeserializeObject(jsonData);
+
+               string jsonData = await _redisServer.Database.StringGetAsync(key);
+                APIResult data = JsonConvert.DeserializeObject<APIResult>(jsonData);
+                return data;
             }
 
             return default;

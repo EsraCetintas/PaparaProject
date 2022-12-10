@@ -1,11 +1,15 @@
 ﻿using AutoMapper;
+using PaparaProject.Application.Aspects.Autofac.Caching;
+using PaparaProject.Application.Aspects.Autofac.Validation;
 using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Application.ValidationRules.FluentValidation;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +27,8 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
+        //[CacheRemoveAspect]
+        [ValidationAspect(typeof(FlatTypeValidator))]
         public async Task<APIResult> AddAsync(FlatTypeDto flatTypeDto)
         {
             var flatType = _mapper.Map<FlatType>(flatTypeDto);
@@ -34,12 +40,15 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "FlatType Added", Data = flatType };
         }
 
+        [CacheRemoveAspect]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var result = await GetByIdAsync(id);
             if (result.Success)
             {
-                await _repository.DeleteAsync((FlatType)result.Data);
+               FlatType flatTypeToDelete = _mapper.Map<FlatType>(result.Data);
+                flatTypeToDelete.Id = id;
+                await _repository.DeleteAsync(flatTypeToDelete);
                 result.Data = null;
                 result.Message = "FlatType Deleted";
                 return result;
@@ -48,6 +57,7 @@ namespace PaparaProject.Application.Concrete.Services
             else return result;
         }
 
+        [CacheAspect]
         public async Task<APIResult> GetAllAsync()
         {
             var flatTypes = await _repository.GetAllAsync();

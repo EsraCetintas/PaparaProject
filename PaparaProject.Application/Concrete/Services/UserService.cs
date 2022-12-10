@@ -39,7 +39,9 @@ namespace PaparaProject.Application.Concrete.Services
             var result = await GetByIdAsync(id);
             if (result.Success)
             {
-                await _repository.DeleteAsync((User)result.Data);
+                User userDelete = _mapper.Map<User>(result.Data);
+                userDelete.Id = id;
+                await _repository.DeleteAsync(userDelete);
                 result.Data = null;
                 result.Message = "User Deleted";
                 return result;

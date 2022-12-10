@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using PaparaProject.Application.Dtos.FlatDtos;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Application.ValidationRules.FluentValidation
 {
-    public class FlatValidator : AbstractValidator<Flat>
+    public class FlatValidator : AbstractValidator<FlatCreateDto>
     {
         public FlatValidator()
         {

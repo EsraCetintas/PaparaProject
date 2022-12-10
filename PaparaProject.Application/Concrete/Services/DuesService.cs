@@ -38,7 +38,9 @@ namespace PaparaProject.Application.Concrete.Services
             var result = await GetByIdAsync(id);
             if (result.Success)
             {
-                await _repository.DeleteAsync((Dues)result.Data);
+                Dues duesToDelete = _mapper.Map<Dues>(result.Data);
+                duesToDelete.Id = id;
+                await _repository.DeleteAsync(duesToDelete);
                 result.Data = null;
                 result.Message = "Dues Deleted";
                 return result;

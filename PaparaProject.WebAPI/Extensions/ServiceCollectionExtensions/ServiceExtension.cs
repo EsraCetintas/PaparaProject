@@ -3,6 +3,7 @@ using PaparaProject.Application.Concrete.Services;
 using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
+using PaparaProject.Application.Utilities.IoC;
 using PaparaProject.Application.Utilities.Security.JWT;
 using PaparaProject.Infrastructure.Caching.Redis;
 using PaparaProject.Persistence.Repositories.EntityFramework;
@@ -39,8 +40,8 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddTransient<IAuthService, AuthService>();
 
             services.AddSingleton<ITokenService, TokenHandler>();
-            
 
+            ServiceTool.Create(services);
         }
     }
 }

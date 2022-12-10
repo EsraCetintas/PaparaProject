@@ -1,6 +1,8 @@
 ﻿using Autofac;
+using Autofac.Core;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
+using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Interceptors;
 using System;
@@ -16,6 +18,7 @@ namespace PaparaProject.Application.Utilities.IoC
     {
         protected override void Load(ContainerBuilder builder)
         {
+
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
