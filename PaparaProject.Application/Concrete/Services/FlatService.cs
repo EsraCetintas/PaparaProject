@@ -29,7 +29,7 @@ namespace PaparaProject.Application.Concrete.Services
             flat.CreatedDate = DateTime.Now;
             flat.LastUpdateAt = DateTime.Now;
             flat.IsDeleted = false;
-            flat.CreatedBy = 1;
+            flat.CreatedBy = 2;
             await _repository.AddAsync(flat);
             return new APIResult { Success = true, Message = "Flat Added", Data = flat };
         }

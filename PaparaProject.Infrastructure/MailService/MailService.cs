@@ -21,32 +21,36 @@ namespace PaparaProject.Infrastructure.MailService
 
         public async Task SendMailAsync(List<string> mailAdress)
         {
-            var cronTime = "*/10 * * * * *";
-            RecurringJob.AddOrUpdate(() => CreateMailAsync(mailAdress), cronTime);
+           RecurringJob.AddOrUpdate(() => CreateMailAsync(mailAdress), Cron.Daily);
         }
 
-        private async Task CreateMailAsync(List<string> mailAdress)
+        //public void CreateMailAsync(List<string> mailAdress)
+        //{
+        //    foreach (var adress in mailAdress)
+        //    {
+        //        SmtpClient sc = new SmtpClient();
+        //        sc.Port = 587;
+        //        sc.Host = "smtp.outlook.com";
+        //        sc.EnableSsl = true;
+        //        sc.Credentials = new NetworkCredential("esra.cetintas000@outlook.com", "12345Papara");
+
+        //        MailMessage mail = new MailMessage();
+        //        mail.From = new MailAddress("esra.cetintas000@outlook.com", "Esra Çetintaş");
+        //        mail.To.Add(adress);
+        //        mail.Subject = "Ödenmemiş Faturalar";
+        //        mail.IsBodyHtml = true;
+        //        mail.Body = "Ödenmemiş faturanız bulunmaktadır. Lütfen son ödeme tarihinden önce faturanızı ödeyiniz.";
+
+        //        sc.Send(mail);
+
+        //        Thread.Sleep(1000);
+        //    }
+
+        //}
+
+        public void CreateMailAsync(List<string> mailAdress)
         {
-            foreach (var adress in mailAdress)
-            {
-                SmtpClient sc = new SmtpClient();
-                sc.Port = 587;
-                sc.Host = "smtp.outlook.com";
-                sc.EnableSsl = true;
-                sc.Credentials = new NetworkCredential("esra.cetintas000@outlook.com", "12345Papara");
 
-                MailMessage mail = new MailMessage();
-                mail.From = new MailAddress("esra.cetintas000@outlook.com", "135790Ee.");
-                mail.To.Add(adress);
-                mail.Subject = "Ödenmemiş Faturalar";
-                mail.IsBodyHtml = true;
-                mail.Body = "Ödenmemiş faturanız bulunmaktadır. Lütfen son ödeme tarihinden önce faturanızı ödeyiniz.";
-
-                sc.Send(mail);
-
-                Thread.Sleep(1000);
-            }
-            
         }
     }
 }

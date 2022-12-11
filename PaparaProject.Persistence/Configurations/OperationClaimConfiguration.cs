@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Persistence.Configurations
 {
-    public class RoleConfiguration : IEntityTypeConfiguration<Role>
+    public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationClaim>
     {
-        public void Configure(EntityTypeBuilder<Role> builder)
+        public void Configure(EntityTypeBuilder<OperationClaim> builder)
         {
-            builder.ToTable("Roles");
+            builder.ToTable("OperationClaims");
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.RoleName)

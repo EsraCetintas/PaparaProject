@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PaparaProject.Application.Aspects.Autofac.Caching;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Aspects.Autofac.Validation;
 using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
@@ -27,6 +28,7 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
+        [SecuredOperationAspect("Admin")]
         //[CacheRemoveAspect]
         [ValidationAspect(typeof(FlatTypeValidator))]
         public async Task<APIResult> AddAsync(FlatTypeDto flatTypeDto)

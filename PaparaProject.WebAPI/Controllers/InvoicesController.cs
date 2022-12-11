@@ -46,7 +46,7 @@ namespace PaparaProject.WebAPI.Controllers
                 {
                     mailAdress.Add(item.Flat.User.EMail);
                 }
-                _mailService.SendMailAsync(mailAdress);
+                await _mailService.SendMailAsync(mailAdress);
             }
             return Ok(result);
         }

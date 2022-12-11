@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Domain.Entities
 {
-    public class UserRole : BaseEntity
+    public class UserOperationClaim
     {
+        public int Id { get; set; }
         public int UserId { get; set; }
-        public int RoleId { get; set; }
+        public int OperationClaimId { get; set; }
 
         public User User { get; set; }
-        public Role Role { get; set; }
+        public OperationClaim OperationClaim { get; set; }
     }
 }

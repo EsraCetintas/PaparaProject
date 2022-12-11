@@ -29,7 +29,7 @@ namespace PaparaProject.Application.Concrete.Services
             invoiceType.CreatedDate = DateTime.Now;
             invoiceType.LastUpdateAt = DateTime.Now;
             invoiceType.IsDeleted = false;
-            invoiceType.CreatedBy = 1;
+            invoiceType.CreatedBy = 2;
             await _repository.AddAsync(invoiceType);
             return new APIResult { Success = true, Message = "Invoice Added", Data = invoiceType };
         }

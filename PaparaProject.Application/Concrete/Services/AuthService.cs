@@ -18,24 +18,24 @@ namespace PaparaProject.Application.Concrete.Services
     {
         readonly IUserService _userService;
         readonly IMapper _mapper;
+        readonly ITokenHelper _tokenHelper;
 
-
-        public AuthService(IUserService userService, IMapper mapper)
+        public AuthService(IUserService userService, IMapper mapper, ITokenHelper tokenHelper)
         {
             _userService = userService;
             _mapper = mapper;
+            _tokenHelper = tokenHelper;
         }
         public async Task<APIResult> Login(UserLoginDto userLoginDto)
         {
-            var result = await _userService.GetByMailAsync(userLoginDto.EMail);
-            User user = (User)result.Data;
-            if (!result.Success)
-                return result;
+            var user = await _userService.GetByMailAsync(userLoginDto.EMail);
+            if (user is null)
+                return new APIResult { Success = false, Message = "User Not Found", Data = null};
 
             if (!HashingHelper.VerifyPasswordHash(userLoginDto.Password, user.PasswordHash, user.PasswordSalt))
                 return new APIResult { Success = false, Message = "Password Invalid", Data = null };
 
-            return new APIResult {Success = true, Message = "Login Succesfull", Data = _mapper.Map<User>(user) };
+            return new APIResult {Success = true, Message = "Login Succesfull", Data = user };
         }
 
         public async Task<APIResult> Register(UserRegisterDto userRegisterDto)
@@ -49,20 +49,27 @@ namespace PaparaProject.Application.Concrete.Services
                 SurName = userRegisterDto.SurName,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
+                IdentityNo = userRegisterDto.IdentityNo,
+                PhoneNumber= userRegisterDto.PhoneNumber,
+                NumberPlate= userRegisterDto.NumberPlate,
             };
-            var userDto = _mapper.Map<UserDto>(user);
-            await _userService.AddAsync(userDto);
-            return new APIResult { Success = true, Message = "Register Succesfull", Data = userDto };
+            await _userService.AddAsync(user);
+            return new APIResult { Success = true, Message = "Login Succesfull", Data = _mapper.Map<User>(user) };
         }
 
         public async Task<bool> UserExists(string email)
         {
             var result = await _userService.GetByMailAsync(email);
-            if (!result.Success)
-            {
+            if (result is null)
                 return false;
-            }
             return true;
+        }
+
+        public async Task<APIResult> CreateAccessToken(User user)
+        {
+            var claims =await _userService.GetClaims(user);
+            var accessToken = _tokenHelper.CreateToken(user, claims);
+            return new APIResult { Success = true, Message = "Token Succesfull", Data = accessToken };
         }
 
     }

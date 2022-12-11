@@ -269,7 +269,7 @@ namespace PaparaProject.Persistence.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("PaparaProject.Domain.Entities.Role", b =>
+            modelBuilder.Entity("PaparaProject.Domain.Entities.OperationClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -283,7 +283,7 @@ namespace PaparaProject.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("OperationClaims");
                 });
 
             modelBuilder.Entity("PaparaProject.Domain.Entities.User", b =>
@@ -325,10 +325,12 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnName("NumberPlate");
 
                     b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("varbinary(MAX)")
                         .HasColumnName("PasswordHash");
 
                     b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
                         .HasColumnType("varbinary(MAX)")
                         .HasColumnName("PasswordSalt");
 
@@ -347,28 +349,16 @@ namespace PaparaProject.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PaparaProject.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("PaparaProject.Domain.Entities.UserOperationClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastUpdateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RoleId")
+                    b.Property<int>("OperationClaimId")
                         .HasColumnType("int")
-                        .HasColumnName("RoleId");
+                        .HasColumnName("OperationClaimId");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int")
@@ -376,11 +366,11 @@ namespace PaparaProject.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("OperationClaimId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserOperationClaims");
                 });
 
             modelBuilder.Entity("PaparaProject.Domain.Entities.Dues", b =>
@@ -441,11 +431,11 @@ namespace PaparaProject.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("PaparaProject.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("PaparaProject.Domain.Entities.UserOperationClaim", b =>
                 {
-                    b.HasOne("PaparaProject.Domain.Entities.Role", "Role")
+                    b.HasOne("PaparaProject.Domain.Entities.OperationClaim", "OperationClaim")
                         .WithMany()
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("OperationClaimId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -455,7 +445,7 @@ namespace PaparaProject.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("OperationClaim");
 
                     b.Navigation("User");
                 });

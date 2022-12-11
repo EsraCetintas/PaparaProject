@@ -10,7 +10,7 @@ using PaparaProject.Persistence.Context.EntityFramework;
 namespace PaparaProject.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221205212216_Init")]
+    [Migration("20221211140725_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,8 +38,7 @@ namespace PaparaProject.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("Deadline")
-                        .IsRequired()
+                    b.Property<DateTime>("Deadline")
                         .HasColumnType("datetime")
                         .HasColumnName("Deadline");
 
@@ -54,7 +53,6 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("PaymentDate")
-                        .IsRequired()
                         .HasColumnType("datetime")
                         .HasColumnName("PaymentDate");
 
@@ -88,8 +86,8 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("FlatNo");
 
-                    b.Property<byte>("FlatState")
-                        .HasColumnType("tinyint")
+                    b.Property<bool>("FlatState")
+                        .HasColumnType("bit")
                         .HasColumnName("FlatState");
 
                     b.Property<int>("FlatTypeId")
@@ -166,8 +164,7 @@ namespace PaparaProject.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("Deadline")
-                        .IsRequired()
+                    b.Property<DateTime>("Deadline")
                         .HasColumnType("datetime")
                         .HasColumnName("Deadline");
 
@@ -186,7 +183,6 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("PaymentDate")
-                        .IsRequired()
                         .HasColumnType("datetime")
                         .HasColumnName("PaymentDate");
 
@@ -249,12 +245,12 @@ namespace PaparaProject.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<byte>("IsNew")
-                        .HasColumnType("tinyint")
+                    b.Property<bool>("IsNew")
+                        .HasColumnType("bit")
                         .HasColumnName("IsNew");
 
-                    b.Property<byte>("IsReaded")
-                        .HasColumnType("tinyint")
+                    b.Property<bool>("IsReaded")
+                        .HasColumnType("bit")
                         .HasColumnName("IsReaded");
 
                     b.Property<DateTime?>("LastUpdateAt")
@@ -265,12 +261,17 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("Title");
 
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("PaparaProject.Domain.Entities.Role", b =>
+            modelBuilder.Entity("PaparaProject.Domain.Entities.OperationClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -284,7 +285,7 @@ namespace PaparaProject.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("OperationClaims");
                 });
 
             modelBuilder.Entity("PaparaProject.Domain.Entities.User", b =>
@@ -322,9 +323,18 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnName("Name");
 
                     b.Property<string>("NumberPlate")
-                        .IsRequired()
                         .HasColumnType("varchar(20)")
                         .HasColumnName("NumberPlate");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("varbinary(MAX)")
+                        .HasColumnName("PasswordHash");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("varbinary(MAX)")
+                        .HasColumnName("PasswordSalt");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -341,28 +351,16 @@ namespace PaparaProject.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("PaparaProject.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("PaparaProject.Domain.Entities.UserOperationClaim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CreatedBy")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastUpdateAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("RoleId")
+                    b.Property<int>("OperationClaimId")
                         .HasColumnType("int")
-                        .HasColumnName("RoleId");
+                        .HasColumnName("OperationClaimId");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int")
@@ -370,11 +368,11 @@ namespace PaparaProject.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("OperationClaimId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserOperationClaims");
                 });
 
             modelBuilder.Entity("PaparaProject.Domain.Entities.Dues", b =>
@@ -426,11 +424,20 @@ namespace PaparaProject.Persistence.Migrations
                     b.Navigation("InvoiceType");
                 });
 
-            modelBuilder.Entity("PaparaProject.Domain.Entities.UserRole", b =>
+            modelBuilder.Entity("PaparaProject.Domain.Entities.Message", b =>
                 {
-                    b.HasOne("PaparaProject.Domain.Entities.Role", "Role")
+                    b.HasOne("PaparaProject.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PaparaProject.Domain.Entities.UserOperationClaim", b =>
+                {
+                    b.HasOne("PaparaProject.Domain.Entities.OperationClaim", "OperationClaim")
+                        .WithMany()
+                        .HasForeignKey("OperationClaimId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -440,7 +447,7 @@ namespace PaparaProject.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.Navigation("OperationClaim");
 
                     b.Navigation("User");
                 });

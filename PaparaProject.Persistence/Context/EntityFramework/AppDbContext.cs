@@ -28,7 +28,7 @@ namespace PaparaProject.Persistence.Context.EntityFramework
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=PaparaProjectDb;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=ProjectPaparaDb;Trusted_Connection=True;");
         }
 
         public DbSet<Flat> Flats { get; set; }
@@ -37,8 +37,8 @@ namespace PaparaProject.Persistence.Context.EntityFramework
         public DbSet<Dues> Dues { get; set; }
         public DbSet<InvoiceType> InvoiceTypes { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
     }
 }

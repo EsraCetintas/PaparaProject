@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+using PaparaProject.Application.Concrete.Services;
 using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -12,10 +14,11 @@ namespace PaparaProject.WebAPI.Controllers
     public class UsersController : ControllerBase
     {
         readonly IUserService _service;
-
-        public UsersController(IUserService service)
+        readonly IAuthService _authService;
+        public UsersController(IUserService service, IAuthService authService)
         {
             _service = service;
+            _authService = authService;
         }
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
@@ -24,17 +27,6 @@ namespace PaparaProject.WebAPI.Controllers
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
-        }
-
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
-        [HttpGet("getbymail")]
-        public async Task<IActionResult> GetByMailAsync(string email)
-        {
-            var result = await _service.GetByMailAsync(email);
-            if (result.Success)
-                return Ok(result);
-            else return NotFound(result);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
@@ -53,10 +45,16 @@ namespace PaparaProject.WebAPI.Controllers
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpPost("add")]
-        public async Task<IActionResult> Add(UserDto userDto)
+        public async Task<IActionResult> Add(UserRegisterDto userRegisterDto)
         {
-            var result = await _service.AddAsync(userDto);
-            return Ok(result);
+            var userExists = _authService.UserExists(userRegisterDto.EMail).Result;
+            if (userExists == true)
+                return BadRequest(new APIResult { Message = "User Already Registered", Success = false, Data = null });
+            else
+            {
+                var result = await _authService.Register(userRegisterDto);
+                return Ok(result);
+            }
         }
 
 

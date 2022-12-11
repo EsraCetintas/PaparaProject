@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.DuesDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -22,17 +23,19 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> AddAsync(DuesCreateDto duesCreateDto)
         {
             var dues = _mapper.Map<Dues>(duesCreateDto);
             dues.CreatedDate = DateTime.Now;
             dues.LastUpdateAt = DateTime.Now;
             dues.IsDeleted = false;
-            dues.CreatedBy = 1;
+            dues.CreatedBy = 2;
             await _repository.AddAsync(dues);
             return new APIResult { Success= true, Message= "Dues Added", Data=dues };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var result = await GetByIdAsync(id);
@@ -50,6 +53,7 @@ namespace PaparaProject.Application.Concrete.Services
 
         }
 
+        [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetAllAsync()
         {
             var dues = await _repository.GetAllAsync();
@@ -57,6 +61,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Dues Brought", Data = result };
         }
 
+        [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetAllByPayFilterDuesAsync(bool isPaid)
         {
             List<Dues> dues = null;
@@ -72,6 +77,7 @@ namespace PaparaProject.Application.Concrete.Services
 
         }
 
+        [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p=>p.Id== id);
@@ -84,6 +90,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> UpdateAsync(int id, DuesCreateDto duesCreateDto)
         {
             var result = await GetByIdAsync(id);

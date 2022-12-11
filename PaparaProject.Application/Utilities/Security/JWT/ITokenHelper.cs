@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Application.Utilities.Security.JWT
 {
-    public interface ITokenService
+    public interface ITokenHelper
     {
-        Token CreateAccessToken(User user);
-        string CreateRefreshToken();
+        AccessToken CreateToken(User user, List<OperationClaim> operationClaims);
     }
 }

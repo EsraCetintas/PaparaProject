@@ -9,5 +9,6 @@ namespace PaparaProject.Application.Interfaces.Persistence.Repositories
 {
     public interface IUserRepository : IEntityRepository<User>
     {
+        Task<List<OperationClaim>> GetClaims(User user);
     }
 }

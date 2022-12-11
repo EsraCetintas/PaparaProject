@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Persistence.Configurations
 {
-    public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
+    public class UserOperationClaimConfiguration : IEntityTypeConfiguration<UserOperationClaim>
     {
-        public void Configure(EntityTypeBuilder<UserRole> builder)
+        public void Configure(EntityTypeBuilder<UserOperationClaim> builder)
         {
-            builder.ToTable("UserRoles");
+            builder.ToTable("UserOperationClaims");
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.UserId)
@@ -21,13 +21,14 @@ namespace PaparaProject.Persistence.Configurations
                 .HasColumnType("int")
                 .IsRequired();
 
-            builder.Property(p => p.RoleId)
-               .HasColumnName("RoleId")
+            builder.Property(p => p.OperationClaimId)
+               .HasColumnName("OperationClaimId")
                .HasColumnType("int")
                .IsRequired();
 
             builder.HasOne(p => p.User);
-            builder.HasOne(p => p.Role);
+            builder.HasOne(p => p.OperationClaim);
         }
     }
 }
+

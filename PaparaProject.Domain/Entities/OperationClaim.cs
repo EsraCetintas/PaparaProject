@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Domain.Entities
 {
-    public class Role
+    public class OperationClaim
     {
         public int Id { get; set; }
         public string RoleName { get; set; }

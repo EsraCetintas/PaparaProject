@@ -42,27 +42,7 @@ namespace PaparaProject.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Messages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "varchar(100)", nullable: false),
-                    Context = table.Column<string>(type: "varchar(100)", nullable: false),
-                    IsReaded = table.Column<byte>(type: "tinyint", nullable: false),
-                    IsNew = table.Column<byte>(type: "tinyint", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Messages", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "OperationClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -71,7 +51,7 @@ namespace PaparaProject.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_OperationClaims", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,7 +65,9 @@ namespace PaparaProject.Persistence.Migrations
                     IdentityNo = table.Column<string>(type: "varchar(11)", nullable: false),
                     EMail = table.Column<string>(type: "varchar(100)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "varchar(11)", nullable: false),
-                    NumberPlate = table.Column<string>(type: "varchar(20)", nullable: false),
+                    NumberPlate = table.Column<string>(type: "varchar(20)", nullable: true),
+                    PasswordHash = table.Column<byte[]>(type: "varbinary(MAX)", nullable: false),
+                    PasswordSalt = table.Column<byte[]>(type: "varbinary(MAX)", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -107,7 +89,7 @@ namespace PaparaProject.Persistence.Migrations
                     BlockNo = table.Column<string>(type: "varchar(100)", nullable: false),
                     FloorNo = table.Column<string>(type: "varchar(100)", nullable: false),
                     FlatNo = table.Column<string>(type: "varchar(100)", nullable: false),
-                    FlatState = table.Column<byte>(type: "tinyint", nullable: false),
+                    FlatState = table.Column<bool>(type: "bit", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -131,13 +113,16 @@ namespace PaparaProject.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserRoles",
+                name: "Messages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "varchar(100)", nullable: false),
+                    Context = table.Column<string>(type: "varchar(100)", nullable: false),
+                    IsReaded = table.Column<bool>(type: "bit", nullable: false),
+                    IsNew = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -145,15 +130,35 @@ namespace PaparaProject.Persistence.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRoles", x => x.Id);
+                    table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Roles",
+                        name: "FK_Messages_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserOperationClaims",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    OperationClaimId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserOperationClaims", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserOperationClaims_OperationClaims_OperationClaimId",
+                        column: x => x.OperationClaimId,
+                        principalTable: "OperationClaims",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserRoles_Users_UserId",
+                        name: "FK_UserOperationClaims_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -168,7 +173,7 @@ namespace PaparaProject.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     FlatId = table.Column<int>(type: "int", nullable: false),
                     AmountOfDues = table.Column<decimal>(type: "decimal", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     Deadline = table.Column<DateTime>(type: "datetime", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -195,7 +200,7 @@ namespace PaparaProject.Persistence.Migrations
                     FlatId = table.Column<int>(type: "int", nullable: false),
                     InvoiceTypeId = table.Column<int>(type: "int", nullable: false),
                     AmountOfInvoice = table.Column<decimal>(type: "decimal", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    PaymentDate = table.Column<DateTime>(type: "datetime", nullable: true),
                     Deadline = table.Column<DateTime>(type: "datetime", nullable: false),
                     CreatedBy = table.Column<int>(type: "int", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -245,13 +250,18 @@ namespace PaparaProject.Persistence.Migrations
                 column: "InvoiceTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_RoleId",
-                table: "UserRoles",
-                column: "RoleId");
+                name: "IX_Messages_UserId",
+                table: "Messages",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserRoles_UserId",
-                table: "UserRoles",
+                name: "IX_UserOperationClaims_OperationClaimId",
+                table: "UserOperationClaims",
+                column: "OperationClaimId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserOperationClaims_UserId",
+                table: "UserOperationClaims",
                 column: "UserId");
         }
 
@@ -267,7 +277,7 @@ namespace PaparaProject.Persistence.Migrations
                 name: "Messages");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "UserOperationClaims");
 
             migrationBuilder.DropTable(
                 name: "Flats");
@@ -276,7 +286,7 @@ namespace PaparaProject.Persistence.Migrations
                 name: "InvoiceTypes");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "OperationClaims");
 
             migrationBuilder.DropTable(
                 name: "FlatTypes");

@@ -14,6 +14,7 @@ namespace PaparaProject.Application.Interfaces.Services
         Task<APIResult> Register(UserRegisterDto userRegisterDto);
         Task<APIResult> Login(UserLoginDto userLoginDto);
         Task<bool> UserExists(string email);
+        Task<APIResult> CreateAccessToken(User user);
 
     }
 }

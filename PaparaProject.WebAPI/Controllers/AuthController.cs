@@ -14,20 +14,20 @@ namespace PaparaProject.WebAPI.Controllers
     public class AuthController : ControllerBase
     {
         readonly IAuthService _authService;
-        readonly ITokenService _tokenService;
-        public AuthController(IAuthService authService, ITokenService tokenService)
+        readonly ITokenHelper _tokenHelper;
+        public AuthController(IAuthService authService, ITokenHelper tokenHelper)
         {
             _authService = authService;
-            _tokenService = tokenService;
+            _tokenHelper = tokenHelper;
         }
 
         [HttpPost("login")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Token))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Login(UserLoginDto userLoginDto)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
+        public async Task<IActionResult> Login(UserLoginDto userLoginDto)
         {
-            var userToLogin = _authService.Login(userLoginDto).Result;
+            var userToLogin = await _authService.Login(userLoginDto);
             if (!userToLogin.Success)
             {
                 return NotFound(userToLogin);
@@ -35,7 +35,7 @@ namespace PaparaProject.WebAPI.Controllers
 
             else
             {
-                var result = _tokenService.CreateAccessToken((User)userToLogin.Data);
+                var result = _authService.CreateAccessToken((User)userToLogin.Data);
                 return Ok(new APIResult
                 {
                     Message = userToLogin.Message,
@@ -48,8 +48,8 @@ namespace PaparaProject.WebAPI.Controllers
 
         [HttpPost("register")]
         [Consumes("application/json")]
-        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Token))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(APIResult))]
         public IActionResult Register(UserRegisterDto userRegisterDto)
         {
             var userExists = _authService.UserExists(userRegisterDto.EMail).Result;
@@ -61,7 +61,7 @@ namespace PaparaProject.WebAPI.Controllers
             else
             {
                 var registerResult = _authService.Register(userRegisterDto).Result;
-                var result = _tokenService.CreateAccessToken((User)registerResult.Data);
+                var result =  _authService.CreateAccessToken((User)registerResult.Data);
                 return Ok(new APIResult
                 {
                     Message = "Register Successful",

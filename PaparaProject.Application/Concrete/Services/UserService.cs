@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -23,9 +24,8 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        public async Task<APIResult> AddAsync(UserDto userDto)
+        public async Task<APIResult> AddAsync(User user)
         {
-            var user = _mapper.Map<User>(userDto);
             user.CreatedDate = DateTime.Now;
             user.LastUpdateAt = DateTime.Now;
             user.IsDeleted = false;
@@ -69,13 +69,17 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> GetByMailAsync(string email)
+        public async Task<User> GetByMailAsync(string email)
         {
            var result = await _repository.GetAsync(u => u.EMail == email);
-            if (result is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return result;
+        }
 
-            else return new APIResult { Success = true, Message = "By Mail User Brought", Data = result };
+        public async Task<List<OperationClaim>> GetClaims(User user)
+        {
+            var result = await _repository.GetClaims(user);
+
+            return result;
         }
 
         public async Task<APIResult> UpdateAsync(int id, UserDto userDto)
