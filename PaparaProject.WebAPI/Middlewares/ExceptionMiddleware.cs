@@ -37,9 +37,9 @@ namespace PaparaProject.WebAPI.Middlewares
             context.Response.StatusCode = context.Response.StatusCode;
             var json = JsonConvert.SerializeObject(new APIResult()
             {
-                Message = exception.ToString(),
+                Message = exception.Message,
                 Success = false,
-                Data = exception.ToString()
+                Data = exception.Data.ToString()
 
             });
 

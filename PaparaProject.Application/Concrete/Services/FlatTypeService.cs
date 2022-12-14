@@ -28,7 +28,7 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        [SecuredOperationAspect("Admin")]
+        //[SecuredOperationAspect("Admin")]
         //[CacheRemoveAspect]
         [ValidationAspect(typeof(FlatTypeValidator))]
         public async Task<APIResult> AddAsync(FlatTypeDto flatTypeDto)

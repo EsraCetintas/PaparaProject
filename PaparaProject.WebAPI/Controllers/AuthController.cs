@@ -14,11 +14,9 @@ namespace PaparaProject.WebAPI.Controllers
     public class AuthController : ControllerBase
     {
         readonly IAuthService _authService;
-        readonly ITokenHelper _tokenHelper;
-        public AuthController(IAuthService authService, ITokenHelper tokenHelper)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
-            _tokenHelper = tokenHelper;
         }
 
         [HttpPost("login")]

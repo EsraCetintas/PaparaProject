@@ -53,7 +53,7 @@ namespace PaparaProject.Application.Concrete.Services
 
         }
 
-        [SecuredOperationAspect("Admin,User")]
+        //[SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetAllAsync()
         {
             var dues = await _repository.GetAllAsync();
@@ -61,7 +61,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Dues Brought", Data = result };
         }
 
-        [SecuredOperationAspect("Admin,User")]
+        [SecuredOperationAspect("User")]
         public async Task<APIResult> GetAllByPayFilterDuesAsync(bool isPaid)
         {
             List<Dues> dues = null;

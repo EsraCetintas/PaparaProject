@@ -28,7 +28,7 @@ namespace PaparaProject.Persistence.Context.EntityFramework
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=ProjectPaparaDb;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=(localdb)\MSSQLLocalDB;Database=PaparaProjectDb;Trusted_Connection=True;");
         }
 
         public DbSet<Flat> Flats { get; set; }

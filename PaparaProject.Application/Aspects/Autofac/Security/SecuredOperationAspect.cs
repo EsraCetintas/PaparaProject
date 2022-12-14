@@ -35,7 +35,7 @@ namespace PaparaProject.Application.Aspects.Autofac.Security
                     return;
                 }
             }
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedAccessException("Yetkiniz bulunmamaktadır.");
         }
     }
 }

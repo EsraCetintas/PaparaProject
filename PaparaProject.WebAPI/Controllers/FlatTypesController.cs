@@ -42,6 +42,8 @@ namespace PaparaProject.WebAPI.Controllers
 
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
+        //[ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(APIResult))]
+
         [HttpPost("add")]
         public async Task<IActionResult> Add(FlatTypeDto flatTypeDto)
         {
@@ -52,6 +54,8 @@ namespace PaparaProject.WebAPI.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
+       
+
         [HttpDelete("delete")]
         public async Task<IActionResult> Delete([FromQuery] int id)
         {

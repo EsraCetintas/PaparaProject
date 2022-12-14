@@ -10,7 +10,7 @@ using PaparaProject.Persistence.Context.EntityFramework;
 namespace PaparaProject.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221211140725_Init")]
+    [Migration("20221214152118_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
