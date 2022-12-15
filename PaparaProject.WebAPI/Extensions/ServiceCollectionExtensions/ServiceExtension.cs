@@ -39,6 +39,7 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddTransient<IInvoiceTypeService, InvoiceTypeService>();
             services.AddTransient<IMessageService, MessageService>();
             services.AddTransient<IUserService, UserService>();
+            services.AddTransient<IPaymentService, PaymentService>();
 
             services.AddTransient<IAuthService, AuthService>();
 

@@ -7,6 +7,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PaparaProject.Infrastructure.PaymentService.Repositories.Concrete;
+using PaparaProject.Infrastructure.PaymentService.Repositories.Interfaces;
+using PaparaProject.Infrastructure.PaymentService.Services.Concrete;
+using PaparaProject.Infrastructure.PaymentService.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +36,11 @@ namespace PaparaProject.PaymentAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "PaparaProject.PaymentAPI", Version = "v1" });
             });
+
+            services.AddScoped<ICardRepository, CardRepository>();
+            services.AddScoped<ICardService, CardService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

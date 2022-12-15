@@ -38,16 +38,16 @@ namespace PaparaProject.WebAPI.Controllers
         {
             
             var result = await _service.GetAllByPayFilterInvoicesAsync(isPaid);
-            if(!isPaid)
-            {
-                List<string> mailAdress = new List<string>();
+            //if(!isPaid)
+            //{
+            //    List<string> mailAdress = new List<string>();
                 
-                foreach (var item in (List<InvoiceDto>)result.Data)
-                {
-                    mailAdress.Add(item.Flat.User.EMail);
-                }
-                await _mailService.SendMailAsync(mailAdress);
-            }
+            //    foreach (var item in (List<InvoiceDto>)result.Data)
+            //    {
+            //        mailAdress.Add(item.Flat.User.EMail);
+            //    }
+            //    await _mailService.SendMailAsync(mailAdress);
+            //}
             return Ok(result);
         }
 

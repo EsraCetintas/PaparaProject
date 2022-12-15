@@ -8,7 +8,6 @@ namespace PaparaProject.Application.Dtos.FlatDtos
 {
     public class FlatCreateDto
     {
-        public int UserId { get; set; }
         public int FlatTypeId { get; set; }
         public string BlockNo { get; set; }
         public string FloorNo { get; set; }

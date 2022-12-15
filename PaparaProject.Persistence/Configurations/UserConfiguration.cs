@@ -16,6 +16,11 @@ namespace PaparaProject.Persistence.Configurations
             builder.ToTable("Users");
             builder.HasKey(p => p.Id);
 
+            builder.Property(p => p.FlatId)
+              .HasColumnName("FlatId")
+              .HasColumnType("int")
+              .IsRequired();
+
             builder.Property(p => p.Name)
              .HasColumnName("Name")
              .HasColumnType("varchar(100)")
@@ -54,6 +59,9 @@ namespace PaparaProject.Persistence.Configurations
             .HasColumnName("PasswordSalt")
             .HasColumnType("varbinary(MAX)")
             .IsRequired();
+
+            //Biz burda Bier-bir ilişki kurduk.
+            builder.HasOne(p => p.Flat);
         }
     }
 }

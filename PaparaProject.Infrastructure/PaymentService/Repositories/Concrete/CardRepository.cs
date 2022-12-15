@@ -17,36 +17,44 @@ namespace PaparaProject.Infrastructure.PaymentService.Repositories.Concrete
     {
         readonly IMongoDatabase _database;
         private readonly IMongoCollection<Card> _collection;
-        public CardRepository(IOptions<MongoSettings> settings)
+        public CardRepository(/*IOptions<MongoSettings> settings*/)
         {
-            var client = new MongoClient(settings.Value.MongoConnection);
-            _database = client.GetDatabase(settings.Value.Database);
+            var settings = MongoClientSettings.FromConnectionString("mongodb+srv://EsraCetintas:135790@paymentcluster.ri9rjjy.mongodb.net/?retryWrites=true&w=majority");
+            settings.ServerApi = new ServerApi(ServerApiVersion.V1);
+            var client = new MongoClient(settings);
+            _database = client.GetDatabase("PaymentDb");
             _collection = _database.GetCollection<Card>("Cards");
         }
 
-        public async Task AddAsync(CardCreateDto cardCreateDto)
+        public async Task AddAsync(Card card)
         {
-            Card card = new Card();
             await _collection.InsertOneAsync(card);
         }
 
-        public async Task DeleteAsync(Card card)
+        public async Task DeleteAsync(string cardNo)
         {
-            await _collection.DeleteOneAsync(c=>c.Id == card.Id);
+            var filter = Builders<Card>.Filter.Eq(c => c.CardNo, cardNo);
+            await _collection.DeleteOneAsync(filter);
         }
 
+        public async Task<Card> FindByCardNoAsync(string cardNo)
+        {
+            var card = _collection.Find(c => c.CardNo == cardNo).FirstOrDefault();
+            return  (Card)card;
+           
+        }
 
         public async Task<Card> GetCardByIdAsync(ObjectId id)
         {
-            var result = await _collection.FindAsync(c => c.Id == id);
-            return (Card)result;
+            var card = _collection.Find(c => c.Id == id).FirstOrDefault();
+            return (Card)card;
         }
 
-        public async Task UpdateAsync(Card card)
+        public async Task UpdateCard(Card card)
         {
-            
+            var filter = Builders<Card>.Filter.Eq(c => c.Id, card.Id);
+            var cardToUpdate = Builders<Card>.Update.Set(c=>c.Balance, card.Balance);
+           await _collection.UpdateOneAsync(filter, cardToUpdate);
         }
-
-
     }
 }

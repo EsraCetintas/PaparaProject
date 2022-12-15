@@ -31,23 +31,19 @@ namespace PaparaProject.Application.Concrete.Services
             invoiceType.IsDeleted = false;
             invoiceType.CreatedBy = 2;
             await _repository.AddAsync(invoiceType);
-            return new APIResult { Success = true, Message = "Invoice Added", Data = invoiceType };
+            return new APIResult { Success = true, Message = "Invoice Type Added", Data = invoiceType };
         }
 
         public async Task<APIResult> DeleteAsync(int id)
         {
-            var result = await GetByIdAsync(id);
-            if (result.Success)
+            var invoiceTypeDelete = await _repository.GetAsync(x => x.Id == id);
+            if (invoiceTypeDelete is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            else
             {
-                InvoiceType invoiceTypeToDelete = _mapper.Map<InvoiceType>(result.Data);
-                invoiceTypeToDelete.Id = id;
-                await _repository.DeleteAsync(invoiceTypeToDelete);
-                result.Data = null;
-                result.Message = "InvoiceType Deleted";
-                return result;
+                await _repository.DeleteAsync(invoiceTypeDelete);
+                return new APIResult { Success = true, Message = "Deleted Invoice Type", Data = null };
             }
-
-            else return result;
         }
 
         public async Task<APIResult> GetAllAsync()
@@ -61,36 +57,26 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
-            {
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
-            }
             else
             {
                 var invoiceTypes = _mapper.Map<InvoiceTypeDto>(result);
-                return new APIResult { Success = true, Message = "By Id Invoice Brought", Data = invoiceTypes };
+                return new APIResult { Success = true, Message = "By Id Invoice Type Brought", Data = invoiceTypes };
             }
         }
 
         public async Task<APIResult> UpdateAsync(int id, InvoiceTypeDto invoiceTypeDto)
         {
-            var result = await GetByIdAsync(id);
+            InvoiceType invoceTypeUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (result.Success)
-            {
-                InvoiceType invoiceToUpdate = (InvoiceType)result.Data;
-                var invoiceType = _mapper.Map<InvoiceType>(invoiceTypeDto);
-                invoiceType.Id = invoiceToUpdate.Id;
-                invoiceType.LastUpdateAt = DateTime.Now;
-                invoiceType.IsDeleted = invoiceToUpdate.IsDeleted;
-                invoiceType.CreatedDate = invoiceToUpdate.CreatedDate;
-                await _repository.UpdateAsync(invoiceType);
-                result.Message = "Invoice Type Updated";
-                result.Data = invoiceType;
+            if (invoceTypeUpdate is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-                return result;
-            }
+            invoceTypeUpdate.LastUpdateAt = DateTime.Now;
+            invoceTypeUpdate.IsDeleted = false;
+            await _repository.UpdateAsync(invoceTypeUpdate);
 
-            else return result;
+            return new APIResult { Success = true, Message = "Updated Invoice Type", Data = null };
         }
     }
 }

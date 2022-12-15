@@ -12,9 +12,10 @@ namespace PaparaProject.Infrastructure.PaymentService.Repositories.Interfaces
     public interface ICardRepository
     {
         Task<Card> GetCardByIdAsync(ObjectId id);
-        Task AddAsync(CardCreateDto card);
-        Task UpdateAsync(Card card);
-        Task DeleteAsync(Card card);
+        Task<Card> FindByCardNoAsync(string cardNo);
+        Task AddAsync(Card card);
+        Task DeleteAsync(string cardNo);
+        Task UpdateCard(Card card);
 
     }
 }

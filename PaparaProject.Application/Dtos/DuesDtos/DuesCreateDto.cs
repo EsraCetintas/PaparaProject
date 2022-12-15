@@ -11,6 +11,8 @@ namespace PaparaProject.Application.Dtos.DuesDtos
         public int FlatId { get; set; }
         public int CreatedBy { get; set; }
         public decimal AmountOfDues { get; set; }
+        public DateTime? PaymentDate { get; set; }
+
         public DateTime Deadline { get; set; }
     }
 }

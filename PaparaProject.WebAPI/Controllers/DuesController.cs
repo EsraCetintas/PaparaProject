@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DuesController : ControllerBase

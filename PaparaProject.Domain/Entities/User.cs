@@ -8,6 +8,7 @@ namespace PaparaProject.Domain.Entities
 {
     public class User : BaseEntity
     {
+        public int FlatId { get; set; }
         public string Name { get; set; }
         public string SurName { get; set; }
         public string IdentityNo { get; set; }
@@ -17,5 +18,7 @@ namespace PaparaProject.Domain.Entities
 
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
+
+        public Flat Flat { get; set; }
     }
 }

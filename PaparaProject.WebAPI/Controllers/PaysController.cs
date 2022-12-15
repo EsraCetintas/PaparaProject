@@ -1,33 +1,34 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
-using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Application.Dtos.CardDto;
+using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Infrastructure.PaymentService.Dtos.PaymentDtos;
-using PaparaProject.Infrastructure.PaymentService.Model;
-using PaparaProject.Infrastructure.PaymentService.Services.Interfaces;
 using PaparaProject.Infrastructure.PaymentService.Utilities.Result;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace PaparaProject.PaymentAPI.Controllers
+namespace PaparaProject.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentsController : ControllerBase
+    public class PaysController : ControllerBase
     {
-        private IPaymentService _paymentService;
-        public PaymentsController(IPaymentService paymentService)
+        private readonly IPaymentService _paymentService;
+
+        public PaysController(IPaymentService paymentService)
         {
-            _paymentService = paymentService;    
+            _paymentService = paymentService;
         }
+
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CardServiceResult))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(CardServiceResult))]
         [HttpPost("pay")]
-        public async Task<IActionResult> Pay(PaymentPayDto paymentPayDto)
+        public async Task<IActionResult> PayDues(int duesId,CardDto cardDto)
         {
-            var result = await _paymentService.Pay(paymentPayDto);
+            var result = await _paymentService.PayDuesAsync(duesId, cardDto);
 
-            if(!result.Result)
+            if (!result.Success)
                 return BadRequest(result.Message);
 
             return Ok(result);

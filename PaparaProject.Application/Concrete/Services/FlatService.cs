@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using PaparaProject.Application.Dtos.DuesDtos;
 using PaparaProject.Application.Dtos.FlatDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -29,37 +31,33 @@ namespace PaparaProject.Application.Concrete.Services
             flat.CreatedDate = DateTime.Now;
             flat.LastUpdateAt = DateTime.Now;
             flat.IsDeleted = false;
-            flat.CreatedBy = 2;
+            flat.CreatedBy = 1;
             await _repository.AddAsync(flat);
             return new APIResult { Success = true, Message = "Flat Added", Data = flat };
         }
 
         public async Task<APIResult> DeleteAsync(int id)
         {
-            var result = await GetByIdAsync(id);
-            if (result.Success)
+            var flatToDelete = await _repository.GetAsync(x => x.Id == id);
+            if (flatToDelete is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            else
             {
-                Flat flatToDelete = _mapper.Map<Flat>(result.Data);
-                flatToDelete.Id = id;
                 await _repository.DeleteAsync(flatToDelete);
-                result.Data = null;
-                result.Message = "Flat Deleted";
-                return result;
+                return new APIResult { Success = true, Message = "Deleted Flat", Data = null };
             }
-
-            else return result;
         }
 
         public async Task<APIResult> GetAllAsync()
         {
-            var flats = await _repository.GetAllAsync();
+            var flats = await _repository.GetAllAsync(includes: x => x.Include(x => x.FlatType));
             var result = _mapper.Map<List<FlatDto>>(flats);
             return new APIResult { Success = true, Message = "All Flats Brought", Data = result };
         }
 
         public async Task<APIResult> GetByIdAsync(int id)
         {
-            var result = await _repository.GetAsync(p => p.Id == id);
+            var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.FlatType));
             if (result is null)
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
             else
@@ -71,25 +69,16 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> UpdateAsync(int id, FlatCreateDto flatCreateDto)
         {
-            var result = await GetByIdAsync(id);
-           
+            Flat flatToUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (result.Success)
-            {
-                Flat flatToUpdate = (Flat)result.Data;
-                var flat = _mapper.Map<Flat>(flatCreateDto);
-                flat.Id = flatToUpdate.Id;
-                flat.LastUpdateAt = DateTime.Now;
-                flat.IsDeleted = flatToUpdate.IsDeleted;
-                flat.CreatedDate = flatToUpdate.CreatedDate;
-                await _repository.UpdateAsync(flat);
-                result.Message = "Flat Updated";
-                result.Data = flat;
+            if (flatToUpdate == null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-                return result;
-            }
+            flatToUpdate.LastUpdateAt = DateTime.Now;
+            flatToUpdate.IsDeleted = false;
+            await _repository.UpdateAsync(flatToUpdate);
 
-            else return result;
+            return new APIResult { Success = true, Message = "Updated Flat", Data = null };
         }
     }
 }

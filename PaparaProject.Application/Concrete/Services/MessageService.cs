@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PaparaProject.Application.Dtos.MessageDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -37,24 +38,19 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> DeleteAsync(int id)
         {
-            var result = await GetByIdAsync(id);
-            if (result.Success)
+            var messageDelete = await _repository.GetAsync(x => x.Id == id);
+            if (messageDelete is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            else
             {
-
-                Message messageToDelete = _mapper.Map<Message>(result.Data);
-                messageToDelete.Id = id;
-                await _repository.DeleteAsync(messageToDelete);
-                result.Data = null;
-                result.Message = "Message Deleted";
-                return result;
+                await _repository.DeleteAsync(messageDelete);
+                return new APIResult { Success = true, Message = "Deleted Message", Data = null };
             }
-
-            else return result;
         }
 
         public async Task<APIResult> GetAllAsync()
         {
-            var messages = await _repository.GetAllAsync();
+            var messages = await _repository.GetAllAsync(includes: x => x.Include(x => x.User));
             var result = _mapper.Map<List<MessageDto>>(messages);
 
             foreach (var message in messages)
@@ -73,9 +69,9 @@ namespace PaparaProject.Application.Concrete.Services
             List<Message> messages = null;
 
             if (isReaded)
-                messages = await _repository.GetAllAsync(p => p.IsReaded == isReaded);
+                messages = await _repository.GetAllAsync(p => p.IsReaded == isReaded, includes: x => x.Include(x => x.User));
             else
-                messages = await _repository.GetAllAsync(p => p.IsReaded == isReaded);
+                messages = await _repository.GetAllAsync(p => p.IsReaded == isReaded, includes: x => x.Include(x => x.User));
 
             var result = _mapper.Map<List<MessageDto>>(messages);
             return new APIResult { Success = true, Message = "By Read Filter Messages Brought", Data = result };
@@ -84,7 +80,7 @@ namespace PaparaProject.Application.Concrete.Services
         //Okundu burda olucak.
         public async Task<APIResult> GetByIdAsync(int id)
         {
-            var result = await _repository.GetAsync(p => p.Id == id);
+            var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.User));
             if (result is null)
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
             else
@@ -100,24 +96,16 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> UpdateAsync(int id, MessageCreateDto messageCreateDto)
         {
-            var result = await GetByIdAsync(id);
+            Message messageUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (result.Success)
-            {
-                Message messageToUpdate = (Message)result.Data;
-                var message = _mapper.Map<Message>(messageCreateDto);
-                message.Id = messageToUpdate.Id;
-                message.LastUpdateAt = DateTime.Now;
-                message.IsDeleted = messageToUpdate.IsDeleted;
-                message.CreatedDate = messageToUpdate.CreatedDate;
-                await _repository.UpdateAsync(message);
-                result.Message = "Message Updated";
-                result.Data = message;
+            if (messageUpdate is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-                return result;
-            }
+            messageUpdate.LastUpdateAt = DateTime.Now;
+            messageUpdate.IsDeleted = false;
+            await _repository.UpdateAsync(messageUpdate);
 
-            else return result;
+            return new APIResult { Success = true, Message = "Updated Message", Data = null };
         }
     }
 }

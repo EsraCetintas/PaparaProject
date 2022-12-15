@@ -39,24 +39,20 @@ namespace PaparaProject.Application.Concrete.Services
             flatType.IsDeleted = false;
             flatType.CreatedBy = 1;
             await _repository.AddAsync(flatType);
-            return new APIResult { Success = true, Message = "FlatType Added", Data = flatType };
+            return new APIResult { Success = true, Message = "FlatType Added", Data = null };
         }
 
         [CacheRemoveAspect]
         public async Task<APIResult> DeleteAsync(int id)
         {
-            var result = await GetByIdAsync(id);
-            if (result.Success)
+            var flatTypeToDelete = await _repository.GetAsync(x => x.Id == id);
+            if (flatTypeToDelete is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            else
             {
-               FlatType flatTypeToDelete = _mapper.Map<FlatType>(result.Data);
-                flatTypeToDelete.Id = id;
                 await _repository.DeleteAsync(flatTypeToDelete);
-                result.Data = null;
-                result.Message = "FlatType Deleted";
-                return result;
+                return new APIResult { Success = true, Message = "Deleted Flat Type", Data = null };
             }
-
-            else return result;
         }
 
         [CacheAspect]
@@ -82,24 +78,16 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> UpdateAsync(int id, FlatTypeDto flatTypeDto)
         {
-            var result = await GetByIdAsync(id);
+            FlatType flatTypeToUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (result.Success)
-            {
-                FlatType flatTypeToUpdate = (FlatType)result.Data;
-                var flatType = _mapper.Map<FlatType>(flatTypeDto);
-                flatType.Id = flatTypeToUpdate.Id;
-                flatType.LastUpdateAt = DateTime.Now;
-                flatType.IsDeleted = flatTypeToUpdate.IsDeleted;
-                flatType.CreatedDate = flatTypeToUpdate.CreatedDate;
-                await _repository.UpdateAsync(flatType);
-                result.Message = "Flat Updated";
-                result.Data = flatType;
+            if (flatTypeToUpdate == null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-                return result;
-            }
+            flatTypeToUpdate.LastUpdateAt = DateTime.Now;
+            flatTypeToUpdate.IsDeleted = false;
+            await _repository.UpdateAsync(flatTypeToUpdate);
 
-            else return result;
+            return new APIResult { Success = true, Message = "Updated Flat Type", Data = null };
         }
     }
 }

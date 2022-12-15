@@ -16,11 +16,6 @@ namespace PaparaProject.Persistence.Configurations
             builder.ToTable("Flats");
             builder.HasKey(p => p.Id);
 
-            builder.Property(p => p.UserId)
-                .HasColumnName("UserId")
-                .HasColumnType("int")
-                .IsRequired();
-
             builder.Property(p => p.FlatTypeId)
                .HasColumnName("FlatTypeId")
                .HasColumnType("int")
@@ -48,7 +43,6 @@ namespace PaparaProject.Persistence.Configurations
 
             //Biz burda Bier-bir ilişki kurduk.
             builder.HasOne(p => p.FlatType);
-            builder.HasOne(p => p.User);
         }
     }
 }

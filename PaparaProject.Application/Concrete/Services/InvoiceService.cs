@@ -37,24 +37,19 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> DeleteAsync(int id)
         {
-            var result = await GetByIdAsync(id);
-            if (result.Success)
+            var invoiceDelete = await _repository.GetAsync(x => x.Id == id);
+            if (invoiceDelete is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            else
             {
-                Invoice invoiceToDelete = _mapper.Map<Invoice>(result.Data);
-                invoiceToDelete.Id = id;
-                await _repository.DeleteAsync(invoiceToDelete);
-                result.Data = null;
-                result.Message = "Invoice Deleted";
-                return result;
+                await _repository.DeleteAsync(invoiceDelete);
+                return new APIResult { Success = true, Message = "Deleted Invoice", Data = null };
             }
-
-            else return result;
         }
 
         public async Task<APIResult> GetAllAsync()
         {
             var invoices = await _repository.GetAllAsync(includes: x => x.Include(x => x.Flat)
-            .ThenInclude(x => x.User)
             .Include(x => x.InvoiceType));
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
             return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
@@ -65,13 +60,11 @@ namespace PaparaProject.Application.Concrete.Services
             List<Invoice> invoices = null;
 
             if (isPaid)
-                 invoices = await _repository.GetAllAsync(p => p.PaymentDate != null, includes: x => x.Include(x => x.Flat)
-            .ThenInclude(x => x.User)
-            .Include(x => x.InvoiceType));
+                invoices = await _repository.GetAllAsync(p => p.PaymentDate != null, includes: x => x.Include(x => x.Flat)
+           .Include(x => x.InvoiceType));
             else
-                 invoices = await _repository.GetAllAsync(p => p.PaymentDate == null, includes: x => x.Include(x => x.Flat)
-            .ThenInclude(x => x.User)
-            .Include(x => x.InvoiceType));
+                invoices = await _repository.GetAllAsync(p => p.PaymentDate == null, includes: x => x.Include(x => x.Flat)
+           .Include(x => x.InvoiceType));
 
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
             return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
@@ -81,7 +74,6 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var invoices = await _repository.GetAllAsync(p => p.PaymentDate == null,
                 includes: x => x.Include(x => x.Flat)
-                .ThenInclude(x => x.User)
                 .Include(x => x.InvoiceType));
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
             return result;
@@ -89,7 +81,8 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> GetByIdAsync(int id)
         {
-            var result = await _repository.GetAsync(p => p.Id == id);
+            var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.Flat)
+            .Include(x => x.InvoiceType));
             if (result is null)
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
             else
@@ -101,23 +94,16 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> UpdateAsync(int id, InvoiceCreateDto invoiceCreateDto)
         {
-            var result = await GetByIdAsync(id);
+            Invoice invoceUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (result.Success)
-            {
-                Invoice invoiceToUpdate = (Invoice)result.Data;
-                var invoice = _mapper.Map<Invoice>(invoiceCreateDto);
-                invoice.Id = invoiceToUpdate.Id;
-                invoice.LastUpdateAt = DateTime.Now;
-                invoice.IsDeleted = invoiceToUpdate.IsDeleted;
-                invoice.CreatedDate = invoiceToUpdate.CreatedDate;
-                await _repository.UpdateAsync(invoice);
-                result.Message = "Invoice Updated";
-                result.Data = invoice;
-                return result;
-            }
+            if (invoceUpdate is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-            else return result;
+            invoceUpdate.LastUpdateAt = DateTime.Now;
+            invoceUpdate.IsDeleted = false;
+            await _repository.UpdateAsync(invoceUpdate);
+
+            return new APIResult { Success = true, Message = "Updated Invoice", Data = null };
         }
     }
 }

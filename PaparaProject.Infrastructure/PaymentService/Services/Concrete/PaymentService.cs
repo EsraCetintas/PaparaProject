@@ -22,13 +22,13 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
         {
             var validationResult = CardValidatorManager.CreditCardValidator(paymentPayDto.CreditCard);
 
-            if(!validationResult.Result)
-                throw new NotImplementedException(); // Validation Hata
+            if (!validationResult.Result)
+                return new CardServiceResult(false,"Validasyon hatası");// Validation Hata
 
             var cardIdResult = await _cardService.FindByCreditCardParams(paymentPayDto.CreditCard);
 
             if(!cardIdResult.HasValue)
-                throw new NotImplementedException(); // Kart bulunamadı.
+                return new CardServiceResult(false, "Kart bulunamadı");// Validation Hata
 
             var reduceResult = await _cardService.ReduceCardBalance(cardIdResult.Value, paymentPayDto.PaymentAmount);
 

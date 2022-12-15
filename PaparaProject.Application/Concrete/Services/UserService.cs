@@ -36,18 +36,14 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> DeleteAsync(int id)
         {
-            var result = await GetByIdAsync(id);
-            if (result.Success)
+            var userDelete = await _repository.GetAsync(x => x.Id == id);
+            if (userDelete is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            else
             {
-                User userDelete = _mapper.Map<User>(result.Data);
-                userDelete.Id = id;
                 await _repository.DeleteAsync(userDelete);
-                result.Data = null;
-                result.Message = "User Deleted";
-                return result;
+                return new APIResult { Success = true, Message = "Deleted User", Data = null };
             }
-
-            else return result;
         }
 
         public async Task<APIResult> GetAllAsync()
@@ -84,24 +80,16 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> UpdateAsync(int id, UserDto userDto)
         {
-            var result = await GetByIdAsync(id);
+            User userUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (result.Success)
-            {
-                User userToUpdate = (User)result.Data;
-                var user = _mapper.Map<User>(userDto);
-                user.Id = userToUpdate.Id;
-                user.LastUpdateAt = DateTime.Now;
-                user.IsDeleted = userToUpdate.IsDeleted;
-                user.CreatedDate = userToUpdate.CreatedDate;
-                await _repository.UpdateAsync(user);
-                result.Message = "User Updated";
-                result.Data = user;
+            if (userUpdate is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
 
-                return result;
-            }
+            userUpdate.LastUpdateAt = DateTime.Now;
+            userUpdate.IsDeleted = false;
+            await _repository.UpdateAsync(userUpdate);
 
-            else return result;
+            return new APIResult { Success = true, Message = "Updated User", Data = null };
         }
     }
 }

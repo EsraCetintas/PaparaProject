@@ -13,7 +13,6 @@ namespace PaparaProject.Application.ValidationRules.FluentValidation
     {
         public FlatValidator()
         {
-            RuleFor(b => b.UserId).NotEmpty();
             RuleFor(b => b.FlatTypeId).NotEmpty();
             RuleFor(b => b.BlockNo).MaximumLength(100).NotEmpty();
             RuleFor(b => b.FloorNo).MaximumLength(100).NotEmpty();

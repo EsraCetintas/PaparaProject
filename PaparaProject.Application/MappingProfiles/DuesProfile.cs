@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using PaparaProject.Application.Dtos.DuesDtos;
+using PaparaProject.Application.Dtos.FlatDtos;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace PaparaProject.Application.MappingProfiles
     {
         public DuesProfile()
         {
-            CreateMap<Dues, DuesDto>().ReverseMap();
+            CreateMap<Dues, DuesDto>().ForMember(x => x.Flat, opt => opt.MapFrom(x => x.Flat)).ReverseMap();
             CreateMap<Dues, DuesCreateDto>().ReverseMap();
         }
     }
