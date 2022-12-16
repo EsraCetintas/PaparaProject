@@ -16,7 +16,7 @@ namespace PaparaProject.Application.MappingProfiles
             CreateMap<User, UserDto>().ReverseMap();
             CreateMap<User, UserRegisterDto>().ReverseMap();
             CreateMap<User, UserLoginDto>().ReverseMap();
-
+            CreateMap<User, UserUpdateDto>().ReverseMap();
         }
     }
 }

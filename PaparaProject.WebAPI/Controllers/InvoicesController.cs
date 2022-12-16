@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using PaparaProject.Application.Dtos.InvoiceDtos;
+using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.IoC;
@@ -17,18 +18,17 @@ namespace PaparaProject.WebAPI.Controllers
     public class InvoicesController : ControllerBase
     {
         readonly IInvoiceService _service;
-        readonly IMailService _mailService;
-        public InvoicesController(IInvoiceService service, IMailService mailService)
+
+        public InvoicesController(IInvoiceService service)
         {
             _service = service;
-            _mailService = mailService; 
         }
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpGet("getall")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAllInvoiceDtosAsync();
             return Ok(result);
         }
 
@@ -38,16 +38,6 @@ namespace PaparaProject.WebAPI.Controllers
         {
             
             var result = await _service.GetAllByPayFilterInvoicesAsync(isPaid);
-            //if(!isPaid)
-            //{
-            //    List<string> mailAdress = new List<string>();
-                
-            //    foreach (var item in (List<InvoiceDto>)result.Data)
-            //    {
-            //        mailAdress.Add(item.Flat.User.EMail);
-            //    }
-            //    await _mailService.SendMailAsync(mailAdress);
-            //}
             return Ok(result);
         }
 
@@ -56,13 +46,11 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetByIdAsync([FromQuery] int id)
         {
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetInvoiceDtoByIdAsync(id);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);
         }
-
-
 
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
@@ -72,7 +60,6 @@ namespace PaparaProject.WebAPI.Controllers
             var result = await _service.AddAsync(invoiceCreateDto);
             return Ok(result);
         }
-
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
@@ -85,14 +72,13 @@ namespace PaparaProject.WebAPI.Controllers
             else return NotFound(result);
         }
 
-
         [Consumes("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromQuery] int id, InvoiceCreateDto invoiceCreateDto)
+        public async Task<IActionResult> Update([FromQuery] int id, InvoiceUpdateDto ınvoiceUpdateDto)
         {
-            var result = await _service.UpdateAsync(id, invoiceCreateDto);
+            var result = await _service.UpdateAsync(id, ınvoiceUpdateDto);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);

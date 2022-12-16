@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using PaparaProject.Application.Dtos.FlatDtos;
-using PaparaProject.Application.Dtos.InvoiceTypeDtos;
 
 namespace PaparaProject.Application.Dtos.InvoiceDtos
 {
-    public class InvoiceDto
+    public class InvoiceUpdateDto
     {
+        public int FlatId { get; set; }
+        public int InvoiceTypeId { get; set; }
         public decimal AmountOfInvoice { get; set; }
-        public DateTime PaymentDate { get; set; }
         public DateTime Deadline { get; set; }
-        public FlatDto Flat { get; set; }
-        public InvoiceTypeDto InvoiceType { get; set; }
+        public DateTime? PaymentDate { get; set; }
+
     }
 }

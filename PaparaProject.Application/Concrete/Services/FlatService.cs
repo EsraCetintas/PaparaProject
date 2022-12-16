@@ -48,14 +48,14 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> GetAllAsync()
+        public async Task<APIResult> GetAllFlatDtosAsync()
         {
             var flats = await _repository.GetAllAsync(includes: x => x.Include(x => x.FlatType));
             var result = _mapper.Map<List<FlatDto>>(flats);
             return new APIResult { Success = true, Message = "All Flats Brought", Data = result };
         }
 
-        public async Task<APIResult> GetByIdAsync(int id)
+        public async Task<APIResult> GetByIdFlatDtoAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.FlatType));
             if (result is null)
@@ -67,7 +67,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> UpdateAsync(int id, FlatCreateDto flatCreateDto)
+        public async Task<APIResult> UpdateAsync(int id, FlatUpdateDto flatUpdateDto)
         {
             Flat flatToUpdate = await _repository.GetAsync(x => x.Id == id);
 
@@ -75,7 +75,11 @@ namespace PaparaProject.Application.Concrete.Services
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
 
             flatToUpdate.LastUpdateAt = DateTime.Now;
-            flatToUpdate.IsDeleted = false;
+            flatToUpdate.FlatState = flatUpdateDto.FlatState;
+            flatToUpdate.FlatNo = flatUpdateDto.FlatNo;
+            flatToUpdate.BlockNo = flatUpdateDto.BlockNo;
+            flatToUpdate.FloorNo = flatUpdateDto.FloorNo;
+            flatToUpdate.FlatTypeId= flatUpdateDto.FlatTypeId;
             await _repository.UpdateAsync(flatToUpdate);
 
             return new APIResult { Success = true, Message = "Updated Flat", Data = null };

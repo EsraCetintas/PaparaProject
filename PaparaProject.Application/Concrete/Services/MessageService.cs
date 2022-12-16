@@ -48,7 +48,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> GetAllAsync()
+        public async Task<APIResult> GetAllMessageDtosAsync()
         {
             var messages = await _repository.GetAllAsync(includes: x => x.Include(x => x.User));
             var result = _mapper.Map<List<MessageDto>>(messages);
@@ -57,14 +57,14 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 message.IsNew = false;
                 int id = message.Id;
-                var messageDto = _mapper.Map<MessageCreateDto>(message);
+                var messageDto = _mapper.Map<MessageUpdateDto>(message);
                 await UpdateAsync(id, messageDto);
             }
 
             return new APIResult { Success = true, Message = "All Messages Brought", Data = result };
         }
 
-        public async Task<APIResult> GetAllByReadFilterAsync(bool isReaded)
+        public async Task<APIResult> GetAllMessageDtosByReadFilterAsync(bool isReaded)
         {
             List<Message> messages = null;
 
@@ -78,7 +78,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         //Okundu burda olucak.
-        public async Task<APIResult> GetByIdAsync(int id)
+        public async Task<APIResult> GetMessageDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.User));
             if (result is null)
@@ -87,23 +87,26 @@ namespace PaparaProject.Application.Concrete.Services
             {
                 var messageToUpdate = result;
                 messageToUpdate.IsNew = false;
-                await UpdateAsync(messageToUpdate.Id, _mapper.Map<MessageCreateDto>(messageToUpdate));
+                await UpdateAsync(messageToUpdate.Id, _mapper.Map<MessageUpdateDto>(messageToUpdate));
                 var message = _mapper.Map<MessageDto>(result);
                 var apiResult = new APIResult { Success = true, Message = "By Id Message Brought", Data = message };
                 return apiResult;
             }
         }
 
-        public async Task<APIResult> UpdateAsync(int id, MessageCreateDto messageCreateDto)
+        public async Task<APIResult> UpdateAsync(int id, MessageUpdateDto messageUpdateDto)
         {
-            Message messageUpdate = await _repository.GetAsync(x => x.Id == id);
+            Message messageToUpdate = await _repository.GetAsync(x => x.Id == id);
 
-            if (messageUpdate is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+            if (messageToUpdate is null)
+                return new APIResult { Success = false, Message = "Message Not Found", Data = null };
 
-            messageUpdate.LastUpdateAt = DateTime.Now;
-            messageUpdate.IsDeleted = false;
-            await _repository.UpdateAsync(messageUpdate);
+            messageToUpdate.LastUpdateAt = DateTime.Now;
+            messageToUpdate.Context = messageUpdateDto.Context;
+            messageToUpdate.Title = messageUpdateDto.Title;
+            messageToUpdate.IsNew = messageToUpdate.IsNew;
+            messageToUpdate.IsReaded = messageToUpdate.IsReaded;
+            await _repository.UpdateAsync(messageToUpdate);
 
             return new APIResult { Success = true, Message = "Updated Message", Data = null };
         }

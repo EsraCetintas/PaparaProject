@@ -46,14 +46,20 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> GetAllAsync()
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            var users = await _repository.GetAllAsync();
+            return users;
+        }
+
+        public async Task<APIResult> GetAllUserDtosAsync()
         {
             var users = await _repository.GetAllAsync();
             var result = _mapper.Map<List<UserDto>>(users);
             return new APIResult { Success = true, Message = "All Users Brought", Data = result };
         }
 
-        public async Task<APIResult> GetByIdAsync(int id)
+        public async Task<APIResult> GetUserDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
@@ -67,8 +73,8 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<User> GetByMailAsync(string email)
         {
-           var result = await _repository.GetAsync(u => u.EMail == email);
-                return result;
+            var result = await _repository.GetAsync(u => u.EMail == email);
+            return result;
         }
 
         public async Task<List<OperationClaim>> GetClaims(User user)
@@ -78,12 +84,12 @@ namespace PaparaProject.Application.Concrete.Services
             return result;
         }
 
-        public async Task<APIResult> UpdateAsync(int id, UserDto userDto)
+        public async Task<APIResult> UpdateAsync(int id, UserUpdateDto userUpdateDto)
         {
             User userUpdate = await _repository.GetAsync(x => x.Id == id);
 
             if (userUpdate is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "User Not Found", Data = null };
 
             userUpdate.LastUpdateAt = DateTime.Now;
             userUpdate.IsDeleted = false;

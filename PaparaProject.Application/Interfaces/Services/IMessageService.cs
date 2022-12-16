@@ -10,11 +10,11 @@ namespace PaparaProject.Application.Interfaces.Services
 {
     public interface IMessageService
     {
-        Task<APIResult> GetAllAsync();
-        Task<APIResult> GetAllByReadFilterAsync(bool isReaded);
-        Task<APIResult> GetByIdAsync(int id);
+        Task<APIResult> GetAllMessageDtosAsync();
+        Task<APIResult> GetAllMessageDtosByReadFilterAsync(bool isReaded);
+        Task<APIResult> GetMessageDtoByIdAsync(int id);
         Task<APIResult> AddAsync(MessageCreateDto messageCreateDto);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, MessageCreateDto messageCreateDto);
+        Task<APIResult> UpdateAsync(int id, MessageUpdateDto messageUpdateDto);
     }
 }

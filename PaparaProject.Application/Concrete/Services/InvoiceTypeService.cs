@@ -46,14 +46,14 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public async Task<APIResult> GetAllAsync()
+        public async Task<APIResult> GetAllInvoiceTypeDtosAsync()
         {
             var invoiceTypes = await _repository.GetAllAsync();
             var result = _mapper.Map<List<InvoiceTypeDto>>(invoiceTypes);
             return new APIResult { Success = true, Message = "All Invoice Types Brought", Data = result };
         }
 
-        public async Task<APIResult> GetByIdAsync(int id)
+        public async Task<APIResult> GetInvoiceTypeDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)

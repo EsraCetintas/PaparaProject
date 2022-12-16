@@ -16,6 +16,7 @@ namespace PaparaProject.Application.MappingProfiles
             CreateMap<Invoice, InvoiceDto>()
                 .ForMember(x=>x.Flat, opt=>opt.MapFrom(x=>x.Flat)).ReverseMap();
             CreateMap<Invoice, InvoiceCreateDto>().ReverseMap();
+            CreateMap<Invoice, InvoiceUpdateDto>().ReverseMap();
 
         }
     }

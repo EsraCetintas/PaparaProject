@@ -56,7 +56,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [CacheAspect]
-        public async Task<APIResult> GetAllAsync()
+        public async Task<APIResult> GetAllFlatTypeDtosAsync()
         {
             var flatTypes = await _repository.GetAllAsync();
             var result = _mapper.Map<List<FlatTypeDto>>(flatTypes);
@@ -64,7 +64,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
 
-        public async Task<APIResult> GetByIdAsync(int id)
+        public async Task<APIResult> GetByIdFlatTypeDtoAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
@@ -84,7 +84,7 @@ namespace PaparaProject.Application.Concrete.Services
                 return new APIResult { Success = false, Message = "Not Found", Data = null };
 
             flatTypeToUpdate.LastUpdateAt = DateTime.Now;
-            flatTypeToUpdate.IsDeleted = false;
+            flatTypeToUpdate.FlatTypeName = flatTypeDto.FlatTypeName;
             await _repository.UpdateAsync(flatTypeToUpdate);
 
             return new APIResult { Success = true, Message = "Updated Flat Type", Data = null };

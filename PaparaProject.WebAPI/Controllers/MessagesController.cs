@@ -22,7 +22,7 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getall")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAllMessageDtosAsync();
             return Ok(result);
         }
 
@@ -30,7 +30,7 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getallbyreadfilter")]
         public async Task<IActionResult> GetAllByReadFilterAsync([FromQuery] bool isReaded)
         {
-            var result = await _service.GetAllByReadFilterAsync(isReaded);
+            var result = await _service.GetAllMessageDtosByReadFilterAsync(isReaded);
             return Ok(result);
         }
 
@@ -39,7 +39,7 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetByIdAsync([FromQuery] int id)
         {
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetMessageDtoByIdAsync(id);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);
@@ -73,9 +73,9 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromQuery] int id, MessageCreateDto messageCreateDto)
+        public async Task<IActionResult> Update([FromQuery] int id, MessageUpdateDto messageUpdateDto)
         {
-            var result = await _service.UpdateAsync(id, messageCreateDto);
+            var result = await _service.UpdateAsync(id, messageUpdateDto);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);

@@ -11,12 +11,13 @@ namespace PaparaProject.Application.Interfaces.Services
 {
     public interface IUserService
     {
-        Task<APIResult> GetAllAsync();
+        Task<APIResult> GetAllUserDtosAsync();
+        Task<List<User>> GetAllUsersAsync();
         Task<APIResult> AddAsync(User user);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, UserDto userDto);
-        Task<APIResult> GetByIdAsync(int id);
-       Task<List<OperationClaim>> GetClaims(User user);
+        Task<APIResult> UpdateAsync(int id, UserUpdateDto userUpdateDto);
+        Task<APIResult> GetUserDtoByIdAsync(int id);
+        Task<List<OperationClaim>> GetClaims(User user);
         Task<User> GetByMailAsync(string email);
     }
 }

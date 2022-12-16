@@ -23,7 +23,7 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getall")]
         public async Task<IActionResult> GetAll()
         {
-            var result = await _service.GetAllAsync();
+            var result = await _service.GetAllFlatTypeDtosAsync();
             return Ok(result);
         }
 
@@ -33,7 +33,7 @@ namespace PaparaProject.WebAPI.Controllers
         [HttpGet("getbyid")]
         public async Task<IActionResult> GetByIdAsync([FromQuery] int id)
         {
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetByIdFlatTypeDtoAsync(id);
             if (result.Success)
                 return Ok(result);
             else return NotFound(result);

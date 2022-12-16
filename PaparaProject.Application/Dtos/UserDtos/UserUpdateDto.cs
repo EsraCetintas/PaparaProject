@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Application.Dtos.UserDtos
 {
-    public class UserRegisterDto
+    public class UserUpdateDto
     {
         public int FlatId { get; set; }
         public string Name { get; set; }
@@ -15,6 +15,5 @@ namespace PaparaProject.Application.Dtos.UserDtos
         public string EMail { get; set; }
         public string PhoneNumber { get; set; }
         public string? NumberPlate { get; set; }
-        public string Password { get; set; }
     }
 }

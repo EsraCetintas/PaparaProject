@@ -11,13 +11,13 @@ namespace PaparaProject.Application.Interfaces.Services
 {
     public interface IDuesService
     {
-        Task<APIResult> GetAllAsync();
-        Task<APIResult> GetAllByPayFilterDuesAsync(bool isPaid);
-        Task<APIResult> GetByIdAsync(int id);
+        Task<APIResult> GetAllDuesDtosAsync();
+        Task<APIResult> GetAllDuesDtosByPayFilterAsync(bool isPaid);
+        Task<APIResult> GetDuesDtoByIdAsync(int id);
         Task<Dues> GetDuesByIdAsync(int id);
         Task<APIResult> AddAsync(DuesCreateDto duesCreateDto);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, DuesCreateDto DuesCreateDto);
+        Task<APIResult> UpdateAsync(int id, DuesUpdateDto duesUpdateDto);
 
     }
 }

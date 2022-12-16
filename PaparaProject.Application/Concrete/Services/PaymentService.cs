@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using PaparaProject.Application.Dtos.CardDto;
 using PaparaProject.Application.Dtos.DuesDtos;
+using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
 using PaparaProject.Domain.Entities;
@@ -28,28 +29,33 @@ namespace PaparaProject.Application.Concrete.Services
             _duesService = duesService;
         }
 
-        public async Task<APIResult> PayDuesAsync(int duesId, CardDto cardto)
+        public async Task<APIResult> PayDuesAsync(int duesId, CreditCardDto creditCardDto)
         {
             var dues = await _duesService.GetDuesByIdAsync(duesId);
 
             if (dues is null)
             {
-                return new APIResult { Success= false, Data = null, Message = "Not Found" };
+                return new APIResult { Success = false, Data = null, Message = "Dues Not Found" };
             }
             else
             {
-              
-                DuesCreateDto duesCreateDto = new DuesCreateDto();
-                duesCreateDto.AmountOfDues = dues.AmountOfDues;
-                duesCreateDto.Deadline = dues.Deadline;
-                duesCreateDto.CreatedBy = dues.CreatedBy;
-                duesCreateDto.FlatId = dues.FlatId;
-                cardto.PaymentAmount = dues.AmountOfDues;
-                var result = await PostAsync(cardto);
+
+                DuesUpdateDto duesUpdateDto = new DuesUpdateDto();
+                duesUpdateDto.AmountOfDues = dues.AmountOfDues;
+                duesUpdateDto.Deadline = dues.Deadline;
+                duesUpdateDto.FlatId = dues.FlatId;
+                CardDto cardDto = new CardDto();
+                cardDto.CreditCard.FullName = creditCardDto.FullName;
+                cardDto.CreditCard.ExpirationDateMonth = creditCardDto.ExpirationDateMonth;
+                cardDto.CreditCard.ExpirationDateYear = creditCardDto.ExpirationDateYear;
+                cardDto.CreditCard.CardNo = creditCardDto.CardNo;
+                cardDto.CreditCard.CVV = creditCardDto.CVV;
+                cardDto.PaymentAmount = dues.AmountOfDues;
+                var result = await PostAsync(cardDto);
                 if (result.Success)
                 {
-                    duesCreateDto.PaymentDate = DateTime.Now;
-                    var updatedDues = await _duesService.UpdateAsync(duesId, duesCreateDto);
+                    duesUpdateDto.PaymentDate = DateTime.Now;
+                    await _duesService.UpdateAsync(duesId, duesUpdateDto);
                     return result;
                 }
                 else return result;
@@ -57,9 +63,38 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public Task<APIResult> PayInvoiceAsync(int invoiceId, CardDto cardDto)
+        public async Task<APIResult> PayInvoiceAsync(int invoiceId, CreditCardDto creditCardDto)
         {
-            throw new NotImplementedException();
+            var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
+
+            if (invoice is null)
+            {
+                return new APIResult { Success = false, Data = null, Message = "Invoice Not Found" };
+            }
+            else
+            {
+
+                InvoiceUpdateDto invoiceUpdateDto = new InvoiceUpdateDto();
+                invoiceUpdateDto.AmountOfInvoice = invoice.AmountOfInvoice;
+                invoiceUpdateDto.Deadline = invoice.Deadline;
+                invoiceUpdateDto.FlatId = invoice.FlatId;
+                CardDto cardDto = new CardDto();
+                cardDto.CreditCard.FullName = creditCardDto.FullName;
+                cardDto.CreditCard.ExpirationDateMonth = creditCardDto.ExpirationDateMonth;
+                cardDto.CreditCard.ExpirationDateYear = creditCardDto.ExpirationDateYear;
+                cardDto.CreditCard.CardNo = creditCardDto.CardNo;
+                cardDto.CreditCard.CVV = creditCardDto.CVV;
+                cardDto.PaymentAmount = invoice.AmountOfInvoice;
+                var result = await PostAsync(cardDto);
+                if (result.Success)
+                {
+                    invoiceUpdateDto.PaymentDate = DateTime.Now;
+                    await _invoiceService.UpdateAsync(invoiceId, invoiceUpdateDto);
+                    return result;
+                }
+                else return result;
+
+            }
         }
 
         private async Task<APIResult> PostAsync(CardDto cardDto)

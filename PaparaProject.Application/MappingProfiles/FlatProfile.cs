@@ -15,6 +15,7 @@ namespace PaparaProject.Application.MappingProfiles
         {
             CreateMap<Flat, FlatDto>().ForMember(x=>x.FlatType,opt=>opt.MapFrom(x=>x.FlatType)).ReverseMap();
             CreateMap<Flat, FlatCreateDto>().ReverseMap();
+            CreateMap<Flat, FlatUpdateDto>().ReverseMap();
 
         }
     }

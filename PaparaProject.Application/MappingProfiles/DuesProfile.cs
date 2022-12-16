@@ -16,6 +16,8 @@ namespace PaparaProject.Application.MappingProfiles
         {
             CreateMap<Dues, DuesDto>().ForMember(x => x.Flat, opt => opt.MapFrom(x => x.Flat)).ReverseMap();
             CreateMap<Dues, DuesCreateDto>().ReverseMap();
+            CreateMap<Dues, DuesUpdateDto>().ReverseMap();
+
         }
     }
 }

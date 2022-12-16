@@ -10,11 +10,11 @@ namespace PaparaProject.Application.Interfaces.Services
 {
     public interface IFlatService
     {
-        Task<APIResult> GetAllAsync();
-        Task<APIResult> GetByIdAsync(int id);
+        Task<APIResult> GetAllFlatDtosAsync();
+        Task<APIResult> GetByIdFlatDtoAsync(int id);
         Task<APIResult> AddAsync(FlatCreateDto flatCreateDto);
         Task<APIResult> DeleteAsync(int id);
-        Task<APIResult> UpdateAsync(int id, FlatCreateDto flatCreateDto);
+        Task<APIResult> UpdateAsync(int id, FlatUpdateDto flatUpdateDto);
 
     }
 }

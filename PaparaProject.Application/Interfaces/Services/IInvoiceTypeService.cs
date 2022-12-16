@@ -10,8 +10,8 @@ namespace PaparaProject.Application.Interfaces.Services
 {
     public interface IInvoiceTypeService
     {
-        Task<APIResult> GetAllAsync();
-        Task<APIResult> GetByIdAsync(int id);
+        Task<APIResult> GetAllInvoiceTypeDtosAsync();
+        Task<APIResult> GetInvoiceTypeDtoByIdAsync(int id);
         Task<APIResult> AddAsync(InvoiceTypeDto invoiceTypeDto);
         Task<APIResult> DeleteAsync(int id);
         Task<APIResult> UpdateAsync(int id, InvoiceTypeDto invoiceTypeDto);

@@ -15,7 +15,7 @@ namespace PaparaProject.Application.MappingProfiles
         {
             CreateMap<Message, MessageDto>().ForMember(x => x.User, opt => opt.MapFrom(x => x.User)).ReverseMap();
             CreateMap<Message, MessageCreateDto>().ReverseMap();
-
+            CreateMap<Message, MessageUpdateDto>().ReverseMap();
         }
     }
 }

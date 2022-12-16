@@ -10,7 +10,7 @@ namespace PaparaProject.Application.Interfaces.Services
 {
     public interface IPaymentService
     {
-        Task<APIResult> PayInvoiceAsync(int invoiceId, CardDto cardDto);
-        Task<APIResult> PayDuesAsync(int duesId, CardDto cardDto);
+        Task<APIResult> PayInvoiceAsync(int invoiceId, CreditCardDto creditCardDto);
+        Task<APIResult> PayDuesAsync(int duesId, CreditCardDto creditCardDto);
     }
 }

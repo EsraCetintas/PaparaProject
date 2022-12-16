@@ -50,7 +50,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         //[SecuredOperationAspect("Admin,User")]
-        public async Task<APIResult> GetAllAsync()
+        public async Task<APIResult> GetAllDuesDtosAsync()
         {
             var dues = await _repository.GetAllAsync(includes: x => x.Include(x => x.Flat));
             var result = _mapper.Map<List<DuesDto>>(dues);
@@ -58,7 +58,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         //[SecuredOperationAspect("User")]
-        public async Task<APIResult> GetAllByPayFilterDuesAsync(bool isPaid)
+        public async Task<APIResult> GetAllDuesDtosByPayFilterAsync(bool isPaid)
         {
             List<Dues> dues = null;
 
@@ -74,7 +74,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         //[SecuredOperationAspect("Admin,User")]
-        public async Task<APIResult> GetByIdAsync(int id)
+        public async Task<APIResult> GetDuesDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.Flat));
             if (result is null)
@@ -93,16 +93,18 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         //[SecuredOperationAspect("Admin")]
-        public async Task<APIResult> UpdateAsync(int id, DuesCreateDto duesCreateDto)
+        public async Task<APIResult> UpdateAsync(int id, DuesUpdateDto duesUpdateDto)
         {
             Dues duesToUpdate = await _repository.GetAsync(x => x.Id == id);
 
             if (duesToUpdate == null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Dues Not Found", Data = null };
 
             duesToUpdate.LastUpdateAt = DateTime.Now;
-            duesToUpdate.IsDeleted = false;
-            duesToUpdate.PaymentDate = duesCreateDto.PaymentDate;
+            duesToUpdate.PaymentDate = duesUpdateDto.PaymentDate;
+            duesToUpdate.Deadline= duesUpdateDto.Deadline;
+            duesToUpdate.AmountOfDues = duesUpdateDto.AmountOfDues;
+            duesToUpdate.FlatId= duesUpdateDto.FlatId;
             await _repository.UpdateAsync(duesToUpdate);
 
             return new APIResult { Success = true, Message = "Updated Dues", Data = null };
