@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -24,16 +25,17 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> AddAsync(User user)
         {
             user.CreatedDate = DateTime.Now;
             user.LastUpdateAt = DateTime.Now;
             user.IsDeleted = false;
-            user.CreatedBy = 1;
             await _repository.AddAsync(user);
             return new APIResult { Success = true, Message = "User Added", Data = user };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var userDelete = await _repository.GetAsync(x => x.Id == id);
@@ -46,12 +48,14 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = await _repository.GetAllAsync();
             return users;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllUserDtosAsync()
         {
             var users = await _repository.GetAllAsync();
@@ -59,6 +63,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Users Brought", Data = result };
         }
 
+        [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetUserDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
@@ -84,6 +89,7 @@ namespace PaparaProject.Application.Concrete.Services
             return result;
         }
 
+        [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> UpdateAsync(int id, UserUpdateDto userUpdateDto)
         {
             User userUpdate = await _repository.GetAsync(x => x.Id == id);

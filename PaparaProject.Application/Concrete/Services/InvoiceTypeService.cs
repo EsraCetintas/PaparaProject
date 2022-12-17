@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.InvoiceTypeDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
@@ -23,17 +24,20 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> AddAsync(InvoiceTypeDto invoiceTypeDto)
         {
-            var invoiceType = _mapper.Map<InvoiceType>(invoiceTypeDto);
+            InvoiceType invoiceType = new InvoiceType();
+            invoiceType.InvoiceTypeName = invoiceTypeDto.InvoiceTypeName;
             invoiceType.CreatedDate = DateTime.Now;
             invoiceType.LastUpdateAt = DateTime.Now;
             invoiceType.IsDeleted = false;
-            invoiceType.CreatedBy = 2;
             await _repository.AddAsync(invoiceType);
+
             return new APIResult { Success = true, Message = "Invoice Type Added", Data = invoiceType };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var invoiceTypeDelete = await _repository.GetAsync(x => x.Id == id);
@@ -46,6 +50,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllInvoiceTypeDtosAsync()
         {
             var invoiceTypes = await _repository.GetAllAsync();
@@ -53,6 +58,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Invoice Types Brought", Data = result };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetInvoiceTypeDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
@@ -65,6 +71,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> UpdateAsync(int id, InvoiceTypeDto invoiceTypeDto)
         {
             InvoiceType invoceTypeUpdate = await _repository.GetAsync(x => x.Id == id);

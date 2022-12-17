@@ -13,11 +13,12 @@ namespace PaparaProject.Application.Interfaces.Services
     {
         Task<APIResult> GetAllInvoiceDtosAsync();
         Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid);
-        Task<APIResult> GetAllUnPaidInvoiceDtosAsync();
+        Task<APIResult> GetAllByFlatInvoiceDtosAsync(int flatId, bool isPaid);
         Task<APIResult> GetInvoiceDtoByIdAsync(int id);
         Task<Invoice> GetInvoiceByIdAsync(int id);
         Task<APIResult> AddAsync(InvoiceCreateDto invoiceCreateDto);
         Task<APIResult> DeleteAsync(int id);
         Task<APIResult> UpdateAsync(int id, InvoiceUpdateDto invoiceUpdateDto);
+        Task<APIResult> UpdateForPayAsync(int id);
     }
 }

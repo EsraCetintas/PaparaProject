@@ -28,20 +28,21 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        //[SecuredOperationAspect("Admin")]
+        [SecuredOperationAspect("Admin")]
         //[CacheRemoveAspect]
         [ValidationAspect(typeof(FlatTypeValidator))]
         public async Task<APIResult> AddAsync(FlatTypeDto flatTypeDto)
         {
-            var flatType = _mapper.Map<FlatType>(flatTypeDto);
+            FlatType flatType = new FlatType();
+            flatType.FlatTypeName = flatTypeDto.FlatTypeName;
             flatType.CreatedDate = DateTime.Now;
             flatType.LastUpdateAt = DateTime.Now;
             flatType.IsDeleted = false;
-            flatType.CreatedBy = 1;
             await _repository.AddAsync(flatType);
             return new APIResult { Success = true, Message = "FlatType Added", Data = null };
         }
 
+        [SecuredOperationAspect("Admin")]
         [CacheRemoveAspect]
         public async Task<APIResult> DeleteAsync(int id)
         {
@@ -55,6 +56,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         [CacheAspect]
         public async Task<APIResult> GetAllFlatTypeDtosAsync()
         {
@@ -63,7 +65,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Flat Types Brought", Data = result };
         }
 
-
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetByIdFlatTypeDtoAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id);
@@ -76,6 +78,8 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
+        [ValidationAspect(typeof(FlatTypeValidator))]
         public async Task<APIResult> UpdateAsync(int id, FlatTypeDto flatTypeDto)
         {
             FlatType flatTypeToUpdate = await _repository.GetAsync(x => x.Id == id);

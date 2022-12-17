@@ -13,7 +13,7 @@ namespace PaparaProject.Application.ValidationRules.FluentValidation
     {
         public FlatTypeValidator()
         {
-            RuleFor(b => b.FlatTypeName).MinimumLength(2).MaximumLength(100).NotEmpty();
+            RuleFor(b => b.FlatTypeName).MaximumLength(100).NotEmpty();
 
         }
     }

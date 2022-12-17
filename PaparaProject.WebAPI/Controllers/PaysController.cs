@@ -24,7 +24,7 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CardServiceResult))]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(CardServiceResult))]
         [HttpPost("pay")]
-        public async Task<IActionResult> PayDues(int duesId,CardDto cardDto)
+        public async Task<IActionResult> PayDues(int duesId,CreditCardDto cardDto)
         {
             var result = await _paymentService.PayDuesAsync(duesId, cardDto);
 

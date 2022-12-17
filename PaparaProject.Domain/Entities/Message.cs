@@ -8,6 +8,7 @@ namespace PaparaProject.Domain.Entities
 {
     public class Message : BaseEntity
     {
+        public int UserId { get; set; }
         public string Title { get; set; }
         public string Context { get; set; }
         public bool IsReaded { get; set; }

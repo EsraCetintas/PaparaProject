@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MongoDB.Bson;
+using PaparaProject.Infrastructure.PaymentService.Dtos.CardActivity;
 using PaparaProject.Infrastructure.PaymentService.Dtos.CardDtos;
 using PaparaProject.Infrastructure.PaymentService.Dtos.Commons;
 using PaparaProject.Infrastructure.PaymentService.Model;
@@ -17,9 +18,11 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
     public class CardService : ICardService
     {
         private readonly ICardRepository _cardRepository;
-        public CardService(ICardRepository cardRepository)
+        private readonly ICardActivityService _cardActivityService;
+        public CardService(ICardRepository cardRepository, ICardActivityService cardActivityService)
         {
             _cardRepository = cardRepository;
+            _cardActivityService = cardActivityService;
         }
 
         public async Task<CardServiceResult> AddAsync(CardCreateDto cardCreateDto)
@@ -93,8 +96,15 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
             else
             {
                 var card = await _cardRepository.GetCardByIdAsync(creditCardId);
-                card.Balance = card.Balance - amount;
-               await _cardRepository.UpdateCard(card);
+
+                decimal oldBalance = card.Balance;
+                decimal newBalance = card.Balance - amount;
+
+                card.Balance = newBalance;         
+                await _cardRepository.UpdateCard(card);
+
+                await this.SaveCardActivity(oldBalance, newBalance, card.Id);
+
                 return new CardServiceResult(true, "Ödeme işlemi başarılı.");
 
             }
@@ -118,6 +128,19 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
                 return null;
             }
             return card;
+        }
+
+        private async Task SaveCardActivity(decimal oldBalance,
+            decimal newBalance,
+            ObjectId cardId)
+        {
+            CardActivityDto cardActivityDto = new CardActivityDto();
+            cardActivityDto.CardId = cardId;
+            cardActivityDto.OldBalance = oldBalance;
+            cardActivityDto.NewBalance = newBalance;
+            cardActivityDto.ActivityDate = DateTime.Now;
+
+            await _cardActivityService.AddAsync(cardActivityDto);
         }
     }
 }

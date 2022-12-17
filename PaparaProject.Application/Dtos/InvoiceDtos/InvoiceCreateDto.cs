@@ -9,7 +9,6 @@ namespace PaparaProject.Application.Dtos.InvoiceDtos
     public class InvoiceCreateDto
     {
         public int FlatId { get; set; }
-        public int CreatedBy { get; set; }
         public int InvoiceTypeId { get; set; }
         public decimal AmountOfInvoice { get; set; }
         public DateTime Deadline { get; set; }

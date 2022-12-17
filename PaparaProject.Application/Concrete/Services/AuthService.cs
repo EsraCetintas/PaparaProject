@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using PaparaProject.Application.Aspects.Autofac.Validation;
 using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
 using PaparaProject.Application.Utilities.Security.Hashing;
 using PaparaProject.Application.Utilities.Security.JWT;
+using PaparaProject.Application.ValidationRules.FluentValidation;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,8 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
             _tokenHelper = tokenHelper;
         }
+
+        [ValidationAspect(typeof(LoginValidator))]
         public async Task<APIResult> Login(UserLoginDto userLoginDto)
         {
             var user = await _userService.GetByMailAsync(userLoginDto.EMail);
@@ -44,6 +48,7 @@ namespace PaparaProject.Application.Concrete.Services
             HashingHelper.CreatePasswordHash(userRegisterDto.Password, out passwordHash, out passwordSalt);
             var user = new User
             {
+                FlatId = userRegisterDto.FlatId,
                 EMail = userRegisterDto.EMail,
                 Name = userRegisterDto.Name,
                 SurName = userRegisterDto.SurName,

@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using PaparaProject.Infrastructure.Excel;
 using PaparaProject.Infrastructure.PaymentService.Repositories.Concrete;
 using PaparaProject.Infrastructure.PaymentService.Repositories.Interfaces;
 using PaparaProject.Infrastructure.PaymentService.Services.Concrete;
@@ -40,6 +41,12 @@ namespace PaparaProject.PaymentAPI
             services.AddScoped<ICardRepository, CardRepository>();
             services.AddScoped<ICardService, CardService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<ICardActivityService, CardActivityService>();
+            services.AddScoped<ICardActivityRepository, CardActivityRepository>();
+            services.AddScoped<IDocumentService, DocumentService>();
+            services.AddScoped<IExcelService, ExcelService>();
+
+
 
         }
 

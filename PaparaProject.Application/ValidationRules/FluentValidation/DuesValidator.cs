@@ -16,8 +16,6 @@ namespace PaparaProject.Application.ValidationRules.FluentValidation
             RuleFor(b => b.AmountOfDues).NotEmpty();
             RuleFor(b => b.Deadline).NotEmpty();
             RuleFor(b => b.FlatId).NotEmpty();
-            RuleFor(b => b.CreatedBy).NotEmpty();
-
         }
     }
 }

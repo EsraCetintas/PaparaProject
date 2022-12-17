@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
@@ -29,17 +30,22 @@ namespace PaparaProject.Application.Concrete.Services
             _mailService = mailService;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> AddAsync(InvoiceCreateDto invoiceCreateDto)
         {
-            var invoice = _mapper.Map<Invoice>(invoiceCreateDto);
+            Invoice invoice = new Invoice();
+            invoice.FlatId= invoiceCreateDto.FlatId;
+            invoice.InvoiceTypeId= invoiceCreateDto.InvoiceTypeId;
+            invoice.AmountOfInvoice= invoiceCreateDto.AmountOfInvoice;
+            invoice.Deadline= invoiceCreateDto.Deadline;
             invoice.CreatedDate = DateTime.Now;
             invoice.LastUpdateAt = DateTime.Now;
             invoice.IsDeleted = false;
-            invoice.CreatedBy = 2;
             await _repository.AddAsync(invoice);
             return new APIResult { Success = true, Message = "Invoice Added", Data = invoice };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var invoiceDelete = await _repository.GetAsync(x => x.Id == id);
@@ -52,6 +58,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllInvoiceDtosAsync()
         {
             var invoices = await _repository.GetAllAsync(includes: x => x.Include(x => x.Flat)
@@ -60,44 +67,33 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid)
         {
             List<Invoice> invoices = null;
 
-            if (isPaid)
-                invoices = await _repository.GetAllAsync(p => p.PaymentDate != null, includes: x => x.Include(x => x.Flat)
+            invoices = await _repository.GetAllAsync(p => isPaid ? p.PaymentDate != null : p.PaymentDate == null, includes: x => x.Include(x => x.Flat)
            .Include(x => x.InvoiceType));
-            else
-                invoices = await _repository.GetAllAsync(p => p.PaymentDate == null, includes: x => x.Include(x => x.Flat)
-           .Include(x => x.InvoiceType));
+
+            if(!isPaid)
+                await this.SendUnPaidInvoiceMail(invoices);
 
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
             return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
         }
 
-        public async Task<APIResult> GetAllUnPaidInvoiceDtosAsync()
+        [SecuredOperationAspect("User")]
+        public async Task<APIResult> GetAllByFlatInvoiceDtosAsync(int flatId, bool isPaid)
         {
-            var invoices = await _repository.GetAllAsync(p => p.PaymentDate == null,
+            var invoices = await _repository.GetAllAsync(p => p.FlatId == flatId && isPaid ? p.PaymentDate != null : p.PaymentDate == null,
                 includes: x => x.Include(x => x.Flat)
-                .Include(x => x.InvoiceType));
+                .Include(x => x.InvoiceType));           
 
-            List<string> mailAdress = new List<string>();
-            var users = await _userService.GetAllUsersAsync();
-            foreach (var user in users)
-            {
-                foreach (var invoice in invoices)
-                {
-                    if (user.FlatId == invoice.FlatId)
-                    {
-                        mailAdress.Add(user.EMail);
-                    }
-                }
-                await _mailService.SendMailAsync(mailAdress);
-            }
             var result = _mapper.Map<List<InvoiceDto>>(invoices);
-            return new APIResult { Success = true, Message = "By UnPaid Filter Invoices Brought and Sent Mail", Data = result };
+            return new APIResult { Success = true, Message = "By Flat Invoices Brought and Sent Mail", Data = result };
         }
 
+        [SecuredOperationAspect("Admin, User")]
         public async Task<APIResult> GetInvoiceDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.Flat)
@@ -117,6 +113,7 @@ namespace PaparaProject.Application.Concrete.Services
             return result;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> UpdateAsync(int id, InvoiceUpdateDto invoiceUpdateDto)
         {
             Invoice invoceToUpdate = await _repository.GetAsync(x => x.Id == id);
@@ -130,6 +127,38 @@ namespace PaparaProject.Application.Concrete.Services
             invoceToUpdate.PaymentDate = invoiceUpdateDto.PaymentDate;
             invoceToUpdate.Deadline = invoiceUpdateDto.Deadline;
             invoceToUpdate.InvoiceTypeId = invoiceUpdateDto.InvoiceTypeId;
+            await _repository.UpdateAsync(invoceToUpdate);
+
+            return new APIResult { Success = true, Message = "Updated Invoice", Data = null };
+        }
+
+        private async Task SendUnPaidInvoiceMail(List<Invoice> invoices)
+        {
+            List<string> mailAdress = new List<string>();
+            var users = await _userService.GetAllUsersAsync();
+            foreach (var user in users)
+            {
+                foreach (var invoice in invoices)
+                {
+                    if (user.FlatId == invoice.FlatId)
+                    {
+                        mailAdress.Add(user.EMail);
+                    }
+                }
+                await _mailService.SendMailAsync(mailAdress);
+            }
+        }
+
+        [SecuredOperationAspect("Admin, User")]
+        public async Task<APIResult> UpdateForPayAsync(int id)
+        {
+            Invoice invoceToUpdate = await _repository.GetAsync(x => x.Id == id);
+
+            if (invoceToUpdate is null)
+                return new APIResult { Success = false, Message = "Not Found", Data = null };
+
+            invoceToUpdate.LastUpdateAt= DateTime.Now;
+            invoceToUpdate.PaymentDate = DateTime.Now;
             await _repository.UpdateAsync(invoceToUpdate);
 
             return new APIResult { Success = true, Message = "Updated Invoice", Data = null };

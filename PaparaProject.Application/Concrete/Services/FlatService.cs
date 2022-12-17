@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.DuesDtos;
 using PaparaProject.Application.Dtos.FlatDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
@@ -25,17 +26,24 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> AddAsync(FlatCreateDto flatCreateDto)
         {
-            var flat = _mapper.Map<Flat>(flatCreateDto);
+            Flat flat = new Flat();
+            flat.FlatTypeId= flatCreateDto.FlatTypeId;
+            flat.FlatState= flatCreateDto.FlatState;
+            flat.FloorNo= flatCreateDto.FloorNo;
+            flat.BlockNo= flatCreateDto.BlockNo;
+            flat.FlatNo= flatCreateDto.FlatNo;
             flat.CreatedDate = DateTime.Now;
             flat.LastUpdateAt = DateTime.Now;
             flat.IsDeleted = false;
-            flat.CreatedBy = 1;
+
             await _repository.AddAsync(flat);
             return new APIResult { Success = true, Message = "Flat Added", Data = flat };
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var flatToDelete = await _repository.GetAsync(x => x.Id == id);
@@ -48,6 +56,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllFlatDtosAsync()
         {
             var flats = await _repository.GetAllAsync(includes: x => x.Include(x => x.FlatType));
@@ -55,6 +64,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Flats Brought", Data = result };
         }
 
+        [SecuredOperationAspect("Admin, User")]
         public async Task<APIResult> GetByIdFlatDtoAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.FlatType));
@@ -67,6 +77,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> UpdateAsync(int id, FlatUpdateDto flatUpdateDto)
         {
             Flat flatToUpdate = await _repository.GetAsync(x => x.Id == id);

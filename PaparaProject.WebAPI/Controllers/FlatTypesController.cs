@@ -5,9 +5,12 @@ using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
 using PaparaProject.WebAPI.Filters.Validation;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PaparaProject.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FlatTypesController : ControllerBase

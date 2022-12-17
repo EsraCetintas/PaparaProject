@@ -1,6 +1,7 @@
 ﻿using PaparaProject.Application.Dtos.DuesDtos;
 using PaparaProject.Application.Dtos.InvoiceDtos;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Infrastructure.PaymentService.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ namespace PaparaProject.Infrastructure.Excel
     {
         Task<APIResult> CreateInvoicesExcel(InvoiceDto invoices);
         Task<APIResult> CreateDuesExcel(DuesDto dues);
+        Task<APIResult> CreateCardActivitiesExcel(List<CardActivity> cardActivities);
 
     }
 }

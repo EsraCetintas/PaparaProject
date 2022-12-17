@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using PaparaProject.Application.Dtos.InvoiceDtos;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class InvoicesController : ControllerBase
@@ -38,6 +40,15 @@ namespace PaparaProject.WebAPI.Controllers
         {
             
             var result = await _service.GetAllByPayFilterInvoicesAsync(isPaid);
+            return Ok(result);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
+        [HttpGet("getallbyflatinvoice")]
+        public async Task<IActionResult> GetAllByFlatInvoiceDtosAsync([FromQuery]int flatId, [FromQuery]bool isPaid)
+        {
+
+            var result = await _service.GetAllByFlatInvoiceDtosAsync(flatId, isPaid);
             return Ok(result);
         }
 

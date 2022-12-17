@@ -24,19 +24,22 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        //[SecuredOperationAspect("Admin")]
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> AddAsync(DuesCreateDto duesCreateDto)
         {
-            var dues = _mapper.Map<Dues>(duesCreateDto);
+            Dues dues = new Dues();
+            dues.FlatId = duesCreateDto.FlatId;
+            dues.AmountOfDues = duesCreateDto.AmountOfDues;
+            dues.Deadline = duesCreateDto.Deadline;
             dues.CreatedDate = DateTime.Now;
             dues.LastUpdateAt = DateTime.Now;
             dues.IsDeleted = false;
-            dues.CreatedBy = 1;
+
             await _repository.AddAsync(dues);
             return new APIResult { Success = true, Message = "Dues Added", Data = null };
         }
 
-        //[SecuredOperationAspect("Admin")]
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var duesToDelete = await _repository.GetAsync(x => x.Id == id);
@@ -49,7 +52,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        //[SecuredOperationAspect("Admin,User")]
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllDuesDtosAsync()
         {
             var dues = await _repository.GetAllAsync(includes: x => x.Include(x => x.Flat));
@@ -57,23 +60,20 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "All Dues Brought", Data = result };
         }
 
-        //[SecuredOperationAspect("User")]
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllDuesDtosByPayFilterAsync(bool isPaid)
         {
             List<Dues> dues = null;
 
-            if (isPaid)
-                dues = await _repository.GetAllAsync(p => p.PaymentDate != null, includes: x => x.Include(x => x.Flat));
-
-            else
-                dues = await _repository.GetAllAsync(p => p.PaymentDate == null, includes: x => x.Include(x => x.Flat));
+            dues = await _repository.GetAllAsync(p => isPaid ? p.PaymentDate != null : p.PaymentDate == null,
+                includes: x => x.Include(x => x.Flat));
 
             var result = _mapper.Map<List<DuesDto>>(dues);
             return new APIResult { Success = true, Message = "By Pay Filter Dues Brought", Data = result };
 
         }
 
-        //[SecuredOperationAspect("Admin,User")]
+        [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetDuesDtoByIdAsync(int id)
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.Flat));
@@ -92,7 +92,7 @@ namespace PaparaProject.Application.Concrete.Services
             return result;
         }
 
-        //[SecuredOperationAspect("Admin")]
+        [SecuredOperationAspect("Admin")]
         public async Task<APIResult> UpdateAsync(int id, DuesUpdateDto duesUpdateDto)
         {
             Dues duesToUpdate = await _repository.GetAsync(x => x.Id == id);
@@ -105,6 +105,33 @@ namespace PaparaProject.Application.Concrete.Services
             duesToUpdate.Deadline= duesUpdateDto.Deadline;
             duesToUpdate.AmountOfDues = duesUpdateDto.AmountOfDues;
             duesToUpdate.FlatId= duesUpdateDto.FlatId;
+            await _repository.UpdateAsync(duesToUpdate);
+
+            return new APIResult { Success = true, Message = "Updated Dues", Data = null };
+        }
+
+        [SecuredOperationAspect("Admin, User")]
+        public async Task<APIResult> GetAllDuesDtosByFlatAsync(int flatId, bool isPaid)
+        {
+            List<Dues> dues = null;
+
+            dues = await _repository.GetAllAsync(p => p.FlatId == flatId && isPaid ? p.PaymentDate != null : p.PaymentDate == null,
+                includes: x => x.Include(x => x.Flat));
+
+            var result = _mapper.Map<List<DuesDto>>(dues);
+            return new APIResult { Success = true, Message = "By Pay Filter Dues Brought", Data = result };
+        }
+
+        [SecuredOperationAspect("Admin, User")]
+        public async Task<APIResult> UpdateForPayAsync(int id)
+        {
+            Dues duesToUpdate = await _repository.GetAsync(x => x.Id == id);
+
+            if (duesToUpdate == null)
+                return new APIResult { Success = false, Message = "Dues Not Found", Data = null };
+
+            duesToUpdate.LastUpdateAt = DateTime.Now;
+            duesToUpdate.PaymentDate = DateTime.Now;
             await _repository.UpdateAsync(duesToUpdate);
 
             return new APIResult { Success = true, Message = "Updated Dues", Data = null };

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.CardDto;
 using PaparaProject.Application.Dtos.DuesDtos;
 using PaparaProject.Application.Dtos.InvoiceDtos;
@@ -29,6 +30,7 @@ namespace PaparaProject.Application.Concrete.Services
             _duesService = duesService;
         }
 
+        [SecuredOperationAspect("Admin, User")]
         public async Task<APIResult> PayDuesAsync(int duesId, CreditCardDto creditCardDto)
         {
             var dues = await _duesService.GetDuesByIdAsync(duesId);
@@ -39,11 +41,6 @@ namespace PaparaProject.Application.Concrete.Services
             }
             else
             {
-
-                DuesUpdateDto duesUpdateDto = new DuesUpdateDto();
-                duesUpdateDto.AmountOfDues = dues.AmountOfDues;
-                duesUpdateDto.Deadline = dues.Deadline;
-                duesUpdateDto.FlatId = dues.FlatId;
                 CardDto cardDto = new CardDto();
                 cardDto.CreditCard.FullName = creditCardDto.FullName;
                 cardDto.CreditCard.ExpirationDateMonth = creditCardDto.ExpirationDateMonth;
@@ -51,11 +48,11 @@ namespace PaparaProject.Application.Concrete.Services
                 cardDto.CreditCard.CardNo = creditCardDto.CardNo;
                 cardDto.CreditCard.CVV = creditCardDto.CVV;
                 cardDto.PaymentAmount = dues.AmountOfDues;
+
                 var result = await PostAsync(cardDto);
                 if (result.Success)
                 {
-                    duesUpdateDto.PaymentDate = DateTime.Now;
-                    await _duesService.UpdateAsync(duesId, duesUpdateDto);
+                    await _duesService.UpdateForPayAsync(duesId);
                     return result;
                 }
                 else return result;
@@ -63,6 +60,7 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        [SecuredOperationAspect("Admin, User")]
         public async Task<APIResult> PayInvoiceAsync(int invoiceId, CreditCardDto creditCardDto)
         {
             var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
@@ -73,11 +71,6 @@ namespace PaparaProject.Application.Concrete.Services
             }
             else
             {
-
-                InvoiceUpdateDto invoiceUpdateDto = new InvoiceUpdateDto();
-                invoiceUpdateDto.AmountOfInvoice = invoice.AmountOfInvoice;
-                invoiceUpdateDto.Deadline = invoice.Deadline;
-                invoiceUpdateDto.FlatId = invoice.FlatId;
                 CardDto cardDto = new CardDto();
                 cardDto.CreditCard.FullName = creditCardDto.FullName;
                 cardDto.CreditCard.ExpirationDateMonth = creditCardDto.ExpirationDateMonth;
@@ -85,15 +78,14 @@ namespace PaparaProject.Application.Concrete.Services
                 cardDto.CreditCard.CardNo = creditCardDto.CardNo;
                 cardDto.CreditCard.CVV = creditCardDto.CVV;
                 cardDto.PaymentAmount = invoice.AmountOfInvoice;
+
                 var result = await PostAsync(cardDto);
                 if (result.Success)
                 {
-                    invoiceUpdateDto.PaymentDate = DateTime.Now;
-                    await _invoiceService.UpdateAsync(invoiceId, invoiceUpdateDto);
+                    await _invoiceService.UpdateForPayAsync(invoiceId);
                     return result;
                 }
                 else return result;
-
             }
         }
 

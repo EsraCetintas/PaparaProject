@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DuesController : ControllerBase
@@ -35,6 +35,14 @@ namespace PaparaProject.WebAPI.Controllers
         public async Task<IActionResult> GetAllByPayFilterDuesAsync([FromQuery] bool isPaid)
         {
             var result = await _service.GetAllDuesDtosByPayFilterAsync(isPaid);
+            return Ok(result);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
+        [HttpGet("getallbyflat")]
+        public async Task<IActionResult> GetAllByPayFlatAsync([FromQuery] int flatId, [FromQuery] bool isPaid)
+        {
+            var result = await _service.GetAllDuesDtosByFlatAsync(flatId, isPaid);
             return Ok(result);
         }
 

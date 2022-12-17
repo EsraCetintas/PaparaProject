@@ -15,7 +15,6 @@ namespace PaparaProject.Domain.Entities
         public string EMail { get; set; }
         public string PhoneNumber { get; set; }
         public string? NumberPlate { get; set; }
-
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
 

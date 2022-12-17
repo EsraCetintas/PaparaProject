@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Application.Dtos.MessageDtos
 {
-    public class MessageCreateDto
+    public class MessageUpdateForUserDto
     {
-        public int UserId { get; set; }
         public string Title { get; set; }
         public string Context { get; set; }
     }

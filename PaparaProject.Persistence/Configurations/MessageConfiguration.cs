@@ -16,6 +16,11 @@ namespace PaparaProject.Persistence.Configurations
             builder.ToTable("Messages");
             builder.HasKey(p => p.Id);
 
+            builder.Property(p => p.UserId)
+             .HasColumnName("UserId")
+             .HasColumnType("int")
+             .IsRequired();
+
             builder.Property(p => p.Title)
              .HasColumnName("Title")
              .HasColumnType("varchar(100)")
@@ -35,6 +40,8 @@ namespace PaparaProject.Persistence.Configurations
             .HasColumnName("IsNew")
             .HasColumnType("bit")
             .IsRequired();
+
+            builder.HasOne(x => x.User);
         }
     }
 }

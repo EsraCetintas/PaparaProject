@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PaparaProject.Application.Dtos.MessageDtos;
 using PaparaProject.Application.Interfaces.Services;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MessagesController : ControllerBase
@@ -31,6 +33,14 @@ namespace PaparaProject.WebAPI.Controllers
         public async Task<IActionResult> GetAllByReadFilterAsync([FromQuery] bool isReaded)
         {
             var result = await _service.GetAllMessageDtosByReadFilterAsync(isReaded);
+            return Ok(result);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
+        [HttpGet("getallbyusermessage")]
+        public async Task<IActionResult> GetAllByUserMessageDtosAsync([FromQuery]int userId, [FromQuery] bool isReaded)
+        {
+            var result = await _service.GetAllByUserMessageDtosAsync(userId,isReaded);
             return Ok(result);
         }
 
@@ -73,7 +83,7 @@ namespace PaparaProject.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(APIResult))]
         [HttpPut("update")]
-        public async Task<IActionResult> Update([FromQuery] int id, MessageUpdateDto messageUpdateDto)
+        public async Task<IActionResult> Update([FromQuery] int id, MessageUpdateForUserDto messageUpdateDto)
         {
             var result = await _service.UpdateAsync(id, messageUpdateDto);
             if (result.Success)
