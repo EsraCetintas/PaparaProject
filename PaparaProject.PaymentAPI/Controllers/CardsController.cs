@@ -36,15 +36,15 @@ namespace PaparaProject.PaymentAPI.Controllers
        
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CardServiceResult))]
         [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(CardServiceResult))]
-        [HttpPost("delete")]
-        public async Task<IActionResult> Delete([FromQuery]string cardNo)
+        [HttpDelete("delete")]
+        public async Task<IActionResult> Delete([FromQuery] string cardNo)
         {
             var result = await _cardService.DeleteAsync(cardNo);
             if (result.Result)
                 return Ok(result);
             else return NotFound(result);
         }
-
+        // TODO: Sil
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Card))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("findbycardno")]

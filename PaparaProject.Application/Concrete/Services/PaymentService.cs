@@ -98,6 +98,9 @@ namespace PaparaProject.Application.Concrete.Services
 
             var responseContent = await response.Content.ReadAsStringAsync();
 
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return new APIResult { Success = false, Message = responseContent.ToString(), Data = null };
+
             return new APIResult { Success = true, Message = responseContent.ToString(), Data = null };
         }
     }

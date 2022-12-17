@@ -26,7 +26,7 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        [SecuredOperationAspect("Admin,User")]
+        //[SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> AddAsync(MessageCreateDto messageCreateDto)
         {
             Message message = new Message();
@@ -35,6 +35,8 @@ namespace PaparaProject.Application.Concrete.Services
             message.UserId = messageCreateDto.UserId;
             message.CreatedDate = DateTime.Now;
             message.LastUpdateAt = DateTime.Now;
+            message.IsNew = true;
+            message.IsReaded = false;
             message.IsDeleted = false;
 
             await _repository.AddAsync(message);
@@ -64,12 +66,12 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "By Read Filter Messages Brought", Data = result };
         }
 
-        [SecuredOperationAspect("Admin")]
+        //[SecuredOperationAspect("Admin")]
         public async Task<APIResult> GetAllMessageDtosAsync()
         {
             var messages = await _repository.GetAllAsync(includes: x => x.Include(x => x.User));
             var result = _mapper.Map<List<MessageDto>>(messages);
-
+            
             foreach (var message in messages)
             {
                 message.IsNew = false;
@@ -134,8 +136,8 @@ namespace PaparaProject.Application.Concrete.Services
                 messageToUpdate.LastUpdateAt = DateTime.Now;
                 messageToUpdate.Context = messageUpdateDto.Context;
                 messageToUpdate.Title = messageUpdateDto.Title;
-                messageToUpdate.IsNew = messageToUpdate.IsNew;
-                messageToUpdate.IsReaded = messageToUpdate.IsReaded;  
+                messageToUpdate.IsNew = messageUpdateDto.IsNew;
+                messageToUpdate.IsReaded = messageUpdateDto.IsReaded;  
                 await _repository.UpdateAsync(messageToUpdate);
             }
         }
