@@ -1,20 +1,23 @@
 # PaparaProject
 
-Patika ve Papara ortaklığında düzenlenen .NET Core bootcamp'i için bitirme projesi olarak fatura yönetim sistemi geliştirilmiştir. Bu projede :
+It includes the invoice management system as a graduation project for the .NET Core bootcamp organized by the partnership of Patika and Papara. In this project :
 
-- .NET 5 kullanılmıştır.
-- Onion mimari tercih edilmiştir.
-- Veritabanı olarak MSSQL kullanılmıştır.
-- ORM olarak entity framework tercih edilmiştir. Code first yaklaşımıyla geliştirilmiştir.
-- Generic repository pattern kullanılmıştır.
-- Ödeme servisi mongo kullanılarak geliştirilmiştir ve ayrı bir servis olarak yazılmıştır.
-- Mongo, cloud üzerinden kullanılarak veritabanı işlemleri gerçekleştirilmiştir. Cloud üzerinden giriş yaparak projede belirtilen kullanıcı bilgileri ile veritabanına erişilebilmektedir. 
-- Rol bazlı yetkilendirilme yapılmıştır. Kimlik doğrulama için JWT tercih edilmiştir.
-- Validasyon için fluent validation kütüphanesi kullanılmıştır.
-- Cacheleme için InMemory Cache tercih edilmiştir.
-- Caching, validation, authorization ve authetication Aspect Oriented Programming yaklaşımıyla sağlanmıştır. 
-- Aspect Oriented Progmming için Autofac kütüphanesi kullanılmıştır.
-- Job management için Hangfire tercih edilmiştir. Bu sayede fatura ödemeyen kişilere günlük mail atılmaktadır.
-- Kart hareketlerinin dökümente edilebilmesi amacıyla Excel oluşturulmaktadır.
+- .NET 5 used
+- Onion architecture is preferred.
+- MSSQL was used as database.
+- Entity framework is preferred as ORM. It was developed with the code first approach.
+- Generic repository pattern used.
+- The payment service was developed using mongo and was written as a separate service.
+- Database operations were performed using Mongo over the cloud. By logging in via the cloud, the database can be accessed with the user information specified in the project.
+- Role-based authorization was made. JWT preferred for authentication.
+- Fluentvalidation library was used for validation.
+- InMemory Cache preferred for caching.
+- Caching, validation, authorization and authentication are provided by the Aspect-Oriented Programming approach.
+- Autofac library is used for Aspect Oriented Programming.
+- Hangfire was preferred for business management. In this way, daily e-mails are sent to people who do not pay their bills.
+- Excel was created to document card movements.
+- Automapper was used for dtos
+- Exception middleware  to catch for errors
+- Extensions have been written for the Dependency Extension.
 
 
