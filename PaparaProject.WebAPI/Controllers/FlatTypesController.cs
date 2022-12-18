@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PaparaProject.WebAPI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FlatTypesController : ControllerBase
