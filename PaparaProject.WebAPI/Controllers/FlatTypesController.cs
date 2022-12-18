@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using PaparaProject.Application.Dtos.FlatTypeDtos;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
-using PaparaProject.WebAPI.Filters.Validation;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
