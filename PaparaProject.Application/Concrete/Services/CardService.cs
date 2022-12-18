@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using PaparaProject.Application.Aspects.Autofac.Security;
 using PaparaProject.Application.Dtos.CardDto;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
@@ -15,12 +16,14 @@ namespace PaparaProject.Application.Concrete.Services
 {
     public class CardService : ICardService
     {
+        [SecuredOperationAspect("Admin,User")]
         public Task<APIResult> SendCardAddRequest(CardCreateDto cardCreateDto)
         {
             var result = this.AddPostAsync(cardCreateDto);
             return result;
         }
 
+        [SecuredOperationAspect("Admin,User")]
         public Task<APIResult> DeleteAsync(string cardNo)
         {
             var result = this.DeletePostAsync(cardNo);
@@ -34,12 +37,12 @@ namespace PaparaProject.Application.Concrete.Services
 
             var response = await httpClient.PostAsync("https://localhost:44327/api/cards/add", body);
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseContent = JsonConvert.DeserializeObject<APIResult>(await response.Content.ReadAsStringAsync());
 
-            if(response.StatusCode != System.Net.HttpStatusCode.OK)
-                return new APIResult { Success = false, Message = responseContent.ToString(), Data = null };
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return new APIResult { Success = false, Message = responseContent.Message, Data = null };
 
-            return new APIResult { Success = true, Message = responseContent.ToString(), Data = null };
+            return new APIResult { Success = true, Message = responseContent.Message, Data = null };
         }
 
         private async Task<APIResult> DeletePostAsync(string cardNo)
@@ -48,12 +51,13 @@ namespace PaparaProject.Application.Concrete.Services
 
             var response = await httpClient.DeleteAsync($"https://localhost:44327/api/cards/delete?cardNo={cardNo}");
 
-            JObject responseContent = (JObject)JsonConvert.DeserializeObject(await response.Content.ReadAsStringAsync());
-            var b = (string)responseContent["Message"];
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return new APIResult { Success = false, Message = (string)responseContent["Message"], Data = null };
+            var a = await response.Content.ReadAsStringAsync();
+            var responseContent = JsonConvert.DeserializeObject<APIResult>(a);
 
-            return new APIResult { Success = true, Message = (string)responseContent["Message"], Data = null };
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                return new APIResult { Success = false, Message = responseContent.Message, Data = null };
+
+            return new APIResult { Success = true, Message = responseContent.Message, Data = null };
         }
     }
 }

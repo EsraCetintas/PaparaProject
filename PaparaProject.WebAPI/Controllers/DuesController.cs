@@ -13,8 +13,7 @@ namespace PaparaProject.WebAPI.Controllers
     [ApiController]
     public class DuesController : ControllerBase
     {
-        
-        readonly IDuesService _service;
+       private readonly IDuesService _service;
 
         public DuesController(IDuesService service)
         {
@@ -40,9 +39,9 @@ namespace PaparaProject.WebAPI.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpGet("getallbyflat")]
-        public async Task<IActionResult> GetAllByPayFlatAsync([FromQuery] int flatId, [FromQuery] bool isPaid)
+        public async Task<IActionResult> GetAllByPayFlatAsync([FromQuery] int flatId)
         {
-            var result = await _service.GetAllDuesDtosByFlatAsync(flatId, isPaid);
+            var result = await _service.GetAllDuesDtosByFlatAsync(flatId);
             return Ok(result);
         }
 

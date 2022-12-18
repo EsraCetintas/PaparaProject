@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PaparaProject.Application.Aspects.Autofac.Caching;
 using PaparaProject.Application.Aspects.Autofac.Security;
+using PaparaProject.Application.Aspects.Autofac.Validation;
 using PaparaProject.Application.Dtos.MessageDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Application.ValidationRules.FluentValidation;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -17,8 +20,8 @@ namespace PaparaProject.Application.Concrete.Services
 {
     public class MessageService : IMessageService
     {
-        readonly IMessageRepository _repository;
-        readonly IMapper _mapper;
+        private readonly IMessageRepository _repository;
+        private readonly IMapper _mapper;
 
         public MessageService(IMessageRepository repository, IMapper mapper)
         {
@@ -26,13 +29,15 @@ namespace PaparaProject.Application.Concrete.Services
             _mapper = mapper;
         }
 
-        //[SecuredOperationAspect("Admin,User")]
+        [SecuredOperationAspect("Admin,User")]
+        [ValidationAspect(typeof(MessageValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> AddAsync(MessageCreateDto messageCreateDto)
         {
             Message message = new Message();
             message.Title = messageCreateDto.Title;
             message.Context = messageCreateDto.Context;
-            message.UserId = messageCreateDto.UserId;
+            message.UserId = messageCreateDto.ConsumerUserId;
             message.CreatedDate = DateTime.Now;
             message.LastUpdateAt = DateTime.Now;
             message.IsNew = true;
@@ -44,11 +49,12 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin,User")]
+        [CacheRemoveAspect]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var messageDelete = await _repository.GetAsync(x => x.Id == id);
             if (messageDelete is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Message Not Found", Data = null };
             else
             {
                 await _repository.DeleteAsync(messageDelete);
@@ -56,7 +62,9 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        public  async Task<APIResult> GetAllByUserMessageDtosAsync(int userId, bool isReaded)
+        [CacheAspect]
+
+        public async Task<APIResult> GetAllByUserMessageDtosAsync(int userId, bool isReaded)
         {
             List<Message> messages = null;
 
@@ -66,12 +74,13 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "By Read Filter Messages Brought", Data = result };
         }
 
-        //[SecuredOperationAspect("Admin")]
+        [SecuredOperationAspect("Admin")]
+        [CacheAspect]
         public async Task<APIResult> GetAllMessageDtosAsync()
         {
             var messages = await _repository.GetAllAsync(includes: x => x.Include(x => x.User));
             var result = _mapper.Map<List<MessageDto>>(messages);
-            
+
             foreach (var message in messages)
             {
                 message.IsNew = false;
@@ -89,7 +98,7 @@ namespace PaparaProject.Application.Concrete.Services
             List<Message> messages = null;
 
             messages = await _repository.GetAllAsync(p => p.IsReaded == isReaded, includes: x => x.Include(x => x.User));
-            
+
             var result = _mapper.Map<List<MessageDto>>(messages);
             return new APIResult { Success = true, Message = "By Read Filter Messages Brought", Data = result };
         }
@@ -99,7 +108,7 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.User));
             if (result is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Message Not Found", Data = null };
             else
             {
                 var messageToUpdate = result;
@@ -112,6 +121,8 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin,User")]
+        [ValidationAspect(typeof(MessageUpdateValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> UpdateAsync(int id, MessageUpdateForUserDto messageUpdateDto)
         {
             Message messageToUpdate = await _repository.GetAsync(x => x.Id == id);
@@ -127,6 +138,7 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "Updated Message", Data = null };
         }
 
+        [CacheRemoveAspect]
         private async Task UpdateAsync(int id, MessageUpdateDto messageUpdateDto)
         {
             Message messageToUpdate = await _repository.GetAsync(x => x.Id == id);
@@ -137,7 +149,7 @@ namespace PaparaProject.Application.Concrete.Services
                 messageToUpdate.Context = messageUpdateDto.Context;
                 messageToUpdate.Title = messageUpdateDto.Title;
                 messageToUpdate.IsNew = messageUpdateDto.IsNew;
-                messageToUpdate.IsReaded = messageUpdateDto.IsReaded;  
+                messageToUpdate.IsReaded = messageUpdateDto.IsReaded;
                 await _repository.UpdateAsync(messageToUpdate);
             }
         }

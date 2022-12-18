@@ -14,9 +14,9 @@ namespace PaparaProject.Application.ValidationRules.FluentValidation
         {
             RuleFor(b => b.Name).MaximumLength(100).NotEmpty();
             RuleFor(b => b.SurName).MaximumLength(100).NotEmpty();
-            RuleFor(b => b.IdentityNo).MaximumLength(100).NotEmpty();
+            RuleFor(b => b.IdentityNo).MinimumLength(11).MaximumLength(11).NotEmpty();
             RuleFor(b => b.EMail).MaximumLength(100).NotEmpty();
-            RuleFor(b => b.PhoneNumber).MaximumLength(100).NotEmpty();
+            RuleFor(b => b.PhoneNumber).MinimumLength(11).MaximumLength(11).NotEmpty();
             RuleFor(b => b.NumberPlate).MaximumLength(20);
         }
     }

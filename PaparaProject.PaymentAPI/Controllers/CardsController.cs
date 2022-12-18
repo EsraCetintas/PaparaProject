@@ -44,7 +44,7 @@ namespace PaparaProject.PaymentAPI.Controllers
                 return Ok(result);
             else return NotFound(result);
         }
-        // TODO: Sil
+
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Card))]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("findbycardno")]

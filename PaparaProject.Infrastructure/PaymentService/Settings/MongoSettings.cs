@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Infrastructure.PaymentService.Settings
 {
-    public class MongoSettings
+    public static class MongoSettings
     {
-        public string MongoConnection { get; set; }
-        public string Database { get; set; }
+        public readonly static string MongoConnection = "mongodb+srv://EsraCetintas:135790@paymentcluster.ri9rjjy.mongodb.net/?retryWrites=true&w=majority";
+        public readonly static string Database = "PaymentDb";
     }
 }

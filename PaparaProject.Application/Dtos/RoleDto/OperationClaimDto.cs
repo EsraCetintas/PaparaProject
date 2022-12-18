@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PaparaProject.Infrastructure.PaymentService.Model
+namespace PaparaProject.Application.Dtos.RoleDto
 {
-    public class Payment
+    public class OperationClaimDto
     {
-
+        public string RoleName { get; set; }
     }
 }

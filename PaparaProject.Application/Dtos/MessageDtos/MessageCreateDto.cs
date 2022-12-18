@@ -8,7 +8,7 @@ namespace PaparaProject.Application.Dtos.MessageDtos
 {
     public class MessageCreateDto
     {
-        public int UserId { get; set; }
+        public int ConsumerUserId { get; set; }
         public string Title { get; set; }
         public string Context { get; set; }
     }

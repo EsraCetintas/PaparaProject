@@ -12,8 +12,6 @@ namespace PaparaProject.Infrastructure.Excel
 {
     public interface IExcelService
     {
-        Task<APIResult> CreateInvoicesExcel(InvoiceDto invoices);
-        Task<APIResult> CreateDuesExcel(DuesDto dues);
         Task<APIResult> CreateCardActivitiesExcel(List<CardActivity> cardActivities);
 
     }

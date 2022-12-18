@@ -13,7 +13,7 @@ namespace PaparaProject.WebAPI.Controllers
     [ApiController]
     public class InvoiceTypesController : ControllerBase
     {
-        readonly IInvoiceTypeService _service;
+        private readonly IInvoiceTypeService _service;
 
         public InvoiceTypesController(IInvoiceTypeService service)
         {

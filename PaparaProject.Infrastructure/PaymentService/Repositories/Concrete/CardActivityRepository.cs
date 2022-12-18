@@ -2,6 +2,7 @@
 using MongoDB.Driver;
 using PaparaProject.Infrastructure.PaymentService.Model;
 using PaparaProject.Infrastructure.PaymentService.Repositories.Interfaces;
+using PaparaProject.Infrastructure.PaymentService.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,12 @@ namespace PaparaProject.Infrastructure.PaymentService.Repositories.Concrete
     {
         readonly IMongoDatabase _database;
         private readonly IMongoCollection<CardActivity> _collection;
-        public CardActivityRepository(/*IOptions<MongoSettings> settings*/)
+        public CardActivityRepository()
         {
-            var settings = MongoClientSettings.FromConnectionString("mongodb+srv://EsraCetintas:135790@paymentcluster.ri9rjjy.mongodb.net/?retryWrites=true&w=majority");
+            var settings = MongoClientSettings.FromConnectionString(MongoSettings.MongoConnection);
             settings.ServerApi = new ServerApi(ServerApiVersion.V1);
             var client = new MongoClient(settings);
-            _database = client.GetDatabase("PaymentDb");
+            _database = client.GetDatabase(MongoSettings.Database);
             _collection = _database.GetCollection<CardActivity>("CardActivities");
         }
 

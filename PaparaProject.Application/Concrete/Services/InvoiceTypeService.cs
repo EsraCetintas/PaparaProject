@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using PaparaProject.Application.Aspects.Autofac.Caching;
 using PaparaProject.Application.Aspects.Autofac.Security;
+using PaparaProject.Application.Aspects.Autofac.Validation;
 using PaparaProject.Application.Dtos.InvoiceTypeDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Application.ValidationRules.FluentValidation;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -15,8 +18,8 @@ namespace PaparaProject.Application.Concrete.Services
 {
     public class InvoiceTypeService : IInvoiceTypeService
     {
-        readonly IInvoiceTypeRepository _repository;
-        readonly IMapper _mapper;
+       private readonly IInvoiceTypeRepository _repository;
+       private readonly IMapper _mapper;
 
         public InvoiceTypeService(IInvoiceTypeRepository repository, IMapper mapper)
         {
@@ -25,6 +28,8 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [ValidationAspect(typeof(InvoiceTypeValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> AddAsync(InvoiceTypeDto invoiceTypeDto)
         {
             InvoiceType invoiceType = new InvoiceType();
@@ -38,11 +43,12 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [CacheRemoveAspect]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var invoiceTypeDelete = await _repository.GetAsync(x => x.Id == id);
             if (invoiceTypeDelete is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Invoice Type Not Found", Data = null };
             else
             {
                 await _repository.DeleteAsync(invoiceTypeDelete);
@@ -51,6 +57,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [CacheAspect]
         public async Task<APIResult> GetAllInvoiceTypeDtosAsync()
         {
             var invoiceTypes = await _repository.GetAllAsync();
@@ -63,7 +70,7 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Invoice Type Not Found", Data = null };
             else
             {
                 var invoiceTypes = _mapper.Map<InvoiceTypeDto>(result);
@@ -72,12 +79,14 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [ValidationAspect(typeof(InvoiceTypeValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> UpdateAsync(int id, InvoiceTypeDto invoiceTypeDto)
         {
             InvoiceType invoceTypeUpdate = await _repository.GetAsync(x => x.Id == id);
 
             if (invoceTypeUpdate is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Invoice Type Not Found", Data = null };
 
             invoceTypeUpdate.LastUpdateAt = DateTime.Now;
             invoceTypeUpdate.IsDeleted = false;

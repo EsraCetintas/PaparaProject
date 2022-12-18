@@ -6,8 +6,9 @@ using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.IoC;
 using PaparaProject.Application.Utilities.Security.JWT;
+using PaparaProject.Infrastructure.Caching.InMemoryCache;
 using PaparaProject.Infrastructure.Caching.Redis;
-using PaparaProject.Infrastructure.MailService;
+using PaparaProject.Infrastructure.MailService.Hangfire;
 using PaparaProject.Persistence.Repositories.EntityFramework;
 
 namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
@@ -24,13 +25,14 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddScoped<IInvoiceTypeRepository, EfInvoiceTypeRepository>();
             services.AddScoped<IMessageRepository, EfMessageRepository>();
             services.AddScoped<IUserRepository, EfUserRepository>();
-            services.AddScoped<ICacheService, RedisCacheService>();
-            services.AddScoped<RedisServer>();
-
+            //services.AddScoped<ICacheService, RedisCacheService>();
+            //services.AddScoped<RedisServer>();
+            services.AddScoped<IUserRoleRepository, EfUserRoleRepository>();
+            services.AddScoped<IUserRoleService, UserRoleService>();
+            services.AddScoped<IRoleRepository, EfRoleRepository>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IMailService, MailService>();
-
             services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
-
 
             services.AddTransient<IDuesService, DuesService>();
             services.AddTransient<IFlatService, FlatService>();
@@ -41,8 +43,8 @@ namespace PaparaProject.WebAPI.Extensions.ServiceCollectionExtensions
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<IPaymentService, PaymentService>();
             services.AddTransient<ICardService, CardService>();
-
-
+            services.AddTransient<IDocumentService, DocumentService>();
+            services.AddTransient<ICacheService, CacheService>();
             services.AddTransient<IAuthService, AuthService>();
 
             services.AddSingleton<ITokenHelper, JwtHelper>();

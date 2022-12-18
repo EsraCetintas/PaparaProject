@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Application.ValidationRules.FluentValidation
 {
-    public class InvoiceValiator : AbstractValidator<InvoiceCreateDto>
+    public class InvoiceValidator : AbstractValidator<InvoiceCreateDto>
     {
-        public InvoiceValiator()
+        public InvoiceValidator()
         {
             RuleFor(b => b.AmountOfInvoice).NotEmpty();
             RuleFor(b => b.Deadline).NotEmpty();

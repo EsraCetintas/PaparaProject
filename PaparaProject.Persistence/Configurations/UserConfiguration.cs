@@ -60,7 +60,6 @@ namespace PaparaProject.Persistence.Configurations
             .HasColumnType("varbinary(MAX)")
             .IsRequired();
 
-            //Biz burda Bier-bir ilişki kurduk.
             builder.HasOne(p => p.Flat);
         }
     }

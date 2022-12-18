@@ -29,14 +29,12 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
         {
             var validationResult = CardValidatorManager.CreditCardValidator(cardCreateDto.CreditCard);
 
-            //if(!validationResult.Result) // validation
-            //    return new CardServiceResult(false, "Kart bakiyesi yetersiz.");
 
-            if (!validationResult.Result) // validation
+            if (!validationResult.Result)
                 return new CardServiceResult(false, validationResult.Message);
 
-            if (!CheckExistsCard(cardCreateDto.CreditCard.CardNo))
-                return new CardServiceResult(false, "Kart bulunmaktadır.");
+            if (await CheckExistsCard(cardCreateDto.CreditCard.CardNo))
+                return new CardServiceResult(false, "Card Not Found.");
 
             Card card = new Card();
             card.Balance = cardCreateDto.Balance;
@@ -44,16 +42,14 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
             card.CardNo = cardCreateDto.CreditCard.CardNo;
             card.ExpirationDateMonth = cardCreateDto.CreditCard.ExpirationDateMonth;
             card.ExpirationDateYear = cardCreateDto.CreditCard.ExpirationDateYear;
-            card.FullName = cardCreateDto.CreditCard.FullName;
+            card.FullName = cardCreateDto.CreditCard.FullName.ToUpper();
             card.UserId = cardCreateDto.UserId;
 
             await _cardRepository.AddAsync(card);
 
-            return new CardServiceResult(true, "Kart eklendi."); // Result
+            return new CardServiceResult(true, "Card Added.");
         }
 
-        // Kartın tüm parametrelerine göre olup olmadğına bak
-        // Varsa ID'sini dön.
         public async Task<ObjectId?> FindByCreditCardParams(CreditCardModel creditCardModel)
         {
            var result = await _cardRepository.FindByCardNoAsync(creditCardModel.CardNo);
@@ -63,23 +59,21 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
             if (result.ExpirationDateYear != creditCardModel.ExpirationDateYear && result.ExpirationDateMonth != creditCardModel.ExpirationDateMonth)
                 return null;
 
-            if(result.FullName != creditCardModel.FullName)
+            if(result.FullName.ToUpper() != creditCardModel.FullName.ToUpper())
                 return null;
 
             return result.Id;
         
         }
 
-        // Kredi kartı daha önce kaydedilmiş mi bak. (Sadece kart no)
-        private bool CheckExistsCard(string cardNo)
+        private async Task<bool> CheckExistsCard(string cardNo)
         {
-           var result = _cardRepository.FindByCardNoAsync(cardNo);
+           var result =await _cardRepository.FindByCardNoAsync(cardNo);
             if(result is null)
                 return false;
             else return true;
         }
 
-        // Kartın bakiyesi var mı yokmu kontrol et.
         private async Task<bool> CheckCardBalance(ObjectId creditCardId, decimal amount)
         {
           var card = await _cardRepository.GetCardByIdAsync(creditCardId);
@@ -88,11 +82,10 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
             else return true;
         }
 
-        // Kart bakiye düşür.
         public async Task<CardServiceResult> ReduceCardBalance(ObjectId creditCardId, decimal amount)
         {
             if (!await CheckCardBalance(creditCardId, amount))
-                return new CardServiceResult(false, "Kart bakiyesi yetersiz. Ödeme yapamassınız.");
+                return new CardServiceResult(false, "Balance of Card is not enough.");
             else
             {
                 var card = await _cardRepository.GetCardByIdAsync(creditCardId);
@@ -105,19 +98,19 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
 
                 await this.SaveCardActivity(oldBalance, newBalance, card.Id);
 
-                return new CardServiceResult(true, "Ödeme işlemi başarılı.");
+                return new CardServiceResult(true, "Paymnet Successfull.");
 
             }
         }
 
         public async Task<CardServiceResult> DeleteAsync(string cardNo)
         {
-            if(CheckExistsCard(cardNo))
+            if(await CheckExistsCard(cardNo))
             {
                await _cardRepository.DeleteAsync(cardNo);
-            return new CardServiceResult(true, "Kart Silindi.");
+            return new CardServiceResult(true, "Card Deleted.");
             }
-            return new CardServiceResult(false, "Kart bulunmamaktadır.");
+            return new CardServiceResult(false, "Card Not Found.");
         }
 
         public async Task<Card> FindByCardNoAsync(string cardNo)

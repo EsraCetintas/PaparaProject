@@ -22,7 +22,6 @@ namespace PaparaProject.Persistence.Context.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //Böylece tüm konfigürasyon dosyalarını reflection ile verdik.
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
         }
 

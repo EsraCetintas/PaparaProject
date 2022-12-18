@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using PaparaProject.Application.Aspects.Autofac.Caching;
 using PaparaProject.Application.Aspects.Autofac.Security;
+using PaparaProject.Application.Aspects.Autofac.Validation;
 using PaparaProject.Application.Dtos.UserDtos;
 using PaparaProject.Application.Interfaces.Persistence.Repositories;
 using PaparaProject.Application.Interfaces.Services;
 using PaparaProject.Application.Utilities.Results;
+using PaparaProject.Application.ValidationRules.FluentValidation;
 using PaparaProject.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -16,8 +19,8 @@ namespace PaparaProject.Application.Concrete.Services
 {
     public class UserService : IUserService
     {
-        readonly IUserRepository _repository;
-        readonly IMapper _mapper;
+       private readonly IUserRepository _repository;
+       private readonly IMapper _mapper;
 
         public UserService(IUserRepository repository, IMapper mapper)
         {
@@ -26,6 +29,8 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [ValidationAspect(typeof(UserValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> AddAsync(User user)
         {
             user.CreatedDate = DateTime.Now;
@@ -36,11 +41,12 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [CacheRemoveAspect]
         public async Task<APIResult> DeleteAsync(int id)
         {
             var userDelete = await _repository.GetAsync(x => x.Id == id);
             if (userDelete is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "User Not Found", Data = null };
             else
             {
                 await _repository.DeleteAsync(userDelete);
@@ -48,7 +54,9 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
-        
+        [SecuredOperationAspect("Admin")]
+        [CacheAspect]
+
         public async Task<List<User>> GetAllUsersAsync()
         {
             var users = await _repository.GetAllAsync();
@@ -56,9 +64,11 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
+        [CacheAspect]
         public async Task<APIResult> GetAllUserDtosAsync()
         {
-            var users = await _repository.GetAllAsync();
+            var users = await _repository.GetAllAsync(includes: x => x.Include(x => x.Flat)
+             .ThenInclude(x => x.FlatType));
             var result = _mapper.Map<List<UserDto>>(users);
             return new APIResult { Success = true, Message = "All Users Brought", Data = result };
         }
@@ -66,9 +76,10 @@ namespace PaparaProject.Application.Concrete.Services
         [SecuredOperationAspect("Admin,User")]
         public async Task<APIResult> GetUserDtoByIdAsync(int id)
         {
-            var result = await _repository.GetAsync(p => p.Id == id);
+            var result = await _repository.GetAsync(p => p.Id == id, includes: x => x.Include(x => x.Flat)
+            .ThenInclude(x=>x.FlatType));
             if (result is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "User Not Found", Data = null };
             else
             {
                 var user = _mapper.Map<UserDto>(result);
@@ -90,6 +101,8 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin,User")]
+        [ValidationAspect(typeof(UserValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> UpdateAsync(int id, UserUpdateDto userUpdateDto)
         {
             User userUpdate = await _repository.GetAsync(x => x.Id == id);
@@ -99,6 +112,14 @@ namespace PaparaProject.Application.Concrete.Services
 
             userUpdate.LastUpdateAt = DateTime.Now;
             userUpdate.IsDeleted = false;
+            userUpdate.NumberPlate = userUpdateDto.NumberPlate;
+            userUpdate.PhoneNumber = userUpdateDto.PhoneNumber;
+            userUpdate.SurName = userUpdateDto.SurName;
+            userUpdate.Name = userUpdateDto.Name;
+            userUpdate.IdentityNo = userUpdateDto.IdentityNo;
+            userUpdate.EMail = userUpdateDto.EMail;
+            userUpdate.FlatId= userUpdateDto.FlatId;
+
             await _repository.UpdateAsync(userUpdate);
 
             return new APIResult { Success = true, Message = "Updated User", Data = null };

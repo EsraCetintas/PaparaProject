@@ -16,15 +16,18 @@ namespace PaparaProject.Infrastructure.PaymentService.Utilities.Validator
         public static CardCreateValidatorResponseModel CreditCardValidator(CreditCardModel creditCardModel)
         {
             if(creditCardModel.CardNo.Length != 16)
-                return new CardCreateValidatorResponseModel { Message = "Kart Numarası Sayısı Geçersiz.", Result = false };
+                return new CardCreateValidatorResponseModel { Message = "Card No Invalid.", Result = false };
 
             if(creditCardModel.CVV.Length != 3)
-                return new CardCreateValidatorResponseModel { Message = "CVV Sayısı Geçersiz.", Result = false };
+                return new CardCreateValidatorResponseModel { Message = "CVV Invalid.", Result = false };
 
-            if(creditCardModel.ExpirationDateYear.Length != 4)
-                return new CardCreateValidatorResponseModel { Message = "Son kullanma yılını kontrol ediniz.", Result = false };
+            if (creditCardModel.ExpirationDateYear < 2022 && creditCardModel.ExpirationDateYear > 2028)
+                return new CardCreateValidatorResponseModel { Message = "Expiration Date Year Invalid.", Result = false };
 
-            return new CardCreateValidatorResponseModel { Message = "Girilen kart bilgileri geçerli.", Result = true };
+            if (creditCardModel.ExpirationDateMonth<0 && creditCardModel.ExpirationDateMonth>13)
+                return new CardCreateValidatorResponseModel { Message = "Expiration Date Month Invalid", Result = false };
+           
+            return new CardCreateValidatorResponseModel { Message = "Card Valid.", Result = true };
         }
     }
 }

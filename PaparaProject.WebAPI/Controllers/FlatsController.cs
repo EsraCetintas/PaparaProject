@@ -13,7 +13,7 @@ namespace PaparaProject.WebAPI.Controllers
     [ApiController]
     public class FlatsController : ControllerBase
     {
-        readonly IFlatService _service;
+        private readonly IFlatService _service;
 
         public FlatsController(IFlatService service)
         {

@@ -17,7 +17,6 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Interfaces
         Task<CardServiceResult> DeleteAsync(string cardNo);
         Task<Card> FindByCardNoAsync(string cardNo);
 
-        // Burada kart ID'sini dön.
         Task<ObjectId?> FindByCreditCardParams(CreditCardModel creditCardModel);
         Task<CardServiceResult> ReduceCardBalance(ObjectId creditCardId, decimal amount);
     }

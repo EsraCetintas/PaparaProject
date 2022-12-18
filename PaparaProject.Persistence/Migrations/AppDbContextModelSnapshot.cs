@@ -208,6 +208,10 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("ConsumerUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("ConsumerUserId");
+
                     b.Property<string>("Context")
                         .IsRequired()
                         .HasColumnType("varchar(100)")
@@ -235,9 +239,8 @@ namespace PaparaProject.Persistence.Migrations
                         .HasColumnType("varchar(100)")
                         .HasColumnName("Title");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int")
-                        .HasColumnName("UserId");
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -398,9 +401,7 @@ namespace PaparaProject.Persistence.Migrations
                 {
                     b.HasOne("PaparaProject.Domain.Entities.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("User");
                 });

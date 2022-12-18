@@ -19,8 +19,8 @@ namespace PaparaProject.Application.Concrete.Services
 {
     public class FlatTypeService : IFlatTypeService
     {
-        readonly IFlatTypeRepository _repository;
-        readonly IMapper _mapper;
+        private readonly IFlatTypeRepository _repository;
+        private readonly IMapper _mapper;
 
         public FlatTypeService(IFlatTypeRepository repository, IMapper mapper)
         {
@@ -29,7 +29,7 @@ namespace PaparaProject.Application.Concrete.Services
         }
 
         [SecuredOperationAspect("Admin")]
-        //[CacheRemoveAspect]
+        [CacheRemoveAspect]
         [ValidationAspect(typeof(FlatTypeValidator))]
         public async Task<APIResult> AddAsync(FlatTypeDto flatTypeDto)
         {
@@ -48,7 +48,7 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var flatTypeToDelete = await _repository.GetAsync(x => x.Id == id);
             if (flatTypeToDelete is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Flat Type Not Found", Data = null };
             else
             {
                 await _repository.DeleteAsync(flatTypeToDelete);
@@ -70,7 +70,7 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var result = await _repository.GetAsync(p => p.Id == id);
             if (result is null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Flat Type Not Found", Data = null };
             else
             {
                 var flatType = _mapper.Map<FlatTypeDto>(result);
@@ -80,12 +80,13 @@ namespace PaparaProject.Application.Concrete.Services
 
         [SecuredOperationAspect("Admin")]
         [ValidationAspect(typeof(FlatTypeValidator))]
+        [CacheRemoveAspect]
         public async Task<APIResult> UpdateAsync(int id, FlatTypeDto flatTypeDto)
         {
             FlatType flatTypeToUpdate = await _repository.GetAsync(x => x.Id == id);
 
             if (flatTypeToUpdate == null)
-                return new APIResult { Success = false, Message = "Not Found", Data = null };
+                return new APIResult { Success = false, Message = "Flat Type Not Found", Data = null };
 
             flatTypeToUpdate.LastUpdateAt = DateTime.Now;
             flatTypeToUpdate.FlatTypeName = flatTypeDto.FlatTypeName;

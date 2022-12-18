@@ -96,12 +96,12 @@ namespace PaparaProject.Application.Concrete.Services
 
             var response = await httpClient.PostAsync("https://localhost:44327/api/Payments/pay", body);
 
-            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseContent = JsonConvert.DeserializeObject<APIResult>(await response.Content.ReadAsStringAsync());
 
             if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                return new APIResult { Success = false, Message = responseContent.ToString(), Data = null };
+                return new APIResult { Success = false, Message = responseContent.Message, Data = null };
 
-            return new APIResult { Success = true, Message = responseContent.ToString(), Data = null };
+            return new APIResult { Success = true, Message = responseContent.Message, Data = null };
         }
     }
 }

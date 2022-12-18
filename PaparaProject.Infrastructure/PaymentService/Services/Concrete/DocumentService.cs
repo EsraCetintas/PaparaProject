@@ -29,7 +29,7 @@ namespace PaparaProject.Infrastructure.PaymentService.Services.Concrete
             var result = await _cardService.FindByCreditCardParams(creditCardModel);
 
             if (result == null)
-                return new CardServiceResult(false, "Kart Bulunamadı.");
+                return new CardServiceResult(false, "Card Not Found.");
 
             var cardActivities = await _cardActivityService.GetCardByIdAsync(result.Value);
 

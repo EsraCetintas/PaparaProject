@@ -85,6 +85,8 @@ namespace PaparaProject.WebAPI
 
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Connection")));
 
+            services.AddMemoryCache();
+
             //IServiceCollection Extension For Injections
             services.ServiceRegistration();
 
@@ -99,6 +101,7 @@ namespace PaparaProject.WebAPI
                 mc.AddProfile(new InvoiceTypeProfile());
                 mc.AddProfile(new MessageProfile());
                 mc.AddProfile(new UserProfile());
+                mc.AddProfile(new RoleProfile());
             });
 
             IMapper mapper = mapperConfig.CreateMapper();

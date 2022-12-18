@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using PaparaProject.Application.Utilities.Results;
 using Newtonsoft.Json;
 using System.Net.Http;
+using FluentValidation;
 
 namespace PaparaProject.WebAPI.Middlewares
 {
@@ -21,7 +22,6 @@ namespace PaparaProject.WebAPI.Middlewares
 
         public async Task Invoke(HttpContext httpContext)
         {
-
             try
             {
                 await _next(httpContext);
@@ -33,8 +33,13 @@ namespace PaparaProject.WebAPI.Middlewares
         }
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            context.Response.ContentType = "application/json";
-            context.Response.StatusCode = context.Response.StatusCode;
+            if (context.Response.StatusCode != 401)
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            if (exception.GetType() == typeof(ValidationException))
+                context.Response.StatusCode = (int)HttpStatusCode.UnprocessableEntity;
+
+            context.Response.ContentType = "application/json";         
             var json = JsonConvert.SerializeObject(new APIResult()
             {
                 Message = exception.Message,
@@ -44,7 +49,6 @@ namespace PaparaProject.WebAPI.Middlewares
             });
 
           return context.Response.WriteAsync(json);
-
          }
     }
 

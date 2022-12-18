@@ -41,7 +41,6 @@ namespace PaparaProject.Persistence.Configurations
             .HasColumnType("bit")
             .IsRequired();
 
-            //Biz burda Bier-bir ilişki kurduk.
             builder.HasOne(p => p.FlatType);
         }
     }

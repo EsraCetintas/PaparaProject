@@ -16,7 +16,7 @@ namespace PaparaProject.Application.ValidationRules.FluentValidation
             RuleFor(b => b.FlatTypeId).NotEmpty();
             RuleFor(b => b.BlockNo).MaximumLength(100).NotEmpty();
             RuleFor(b => b.FloorNo).MaximumLength(100).NotEmpty();
-            RuleFor(b => b.FlatNo).NotEmpty();
+            RuleFor(b => b.FlatNo).MaximumLength(100).NotEmpty();
             RuleFor(b => b.FlatState).NotEmpty();
         }
     }

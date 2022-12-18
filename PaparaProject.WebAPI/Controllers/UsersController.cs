@@ -15,8 +15,8 @@ namespace PaparaProject.WebAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        readonly IUserService _service;
-        readonly IAuthService _authService;
+       private readonly IUserService _service;
+       private readonly IAuthService _authService;
         public UsersController(IUserService service, IAuthService authService)
         {
             _service = service;

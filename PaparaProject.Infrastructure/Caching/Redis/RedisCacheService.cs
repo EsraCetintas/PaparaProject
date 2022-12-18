@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using PaparaProject.Application.Interfaces.Infrastructure;
 using PaparaProject.Application.Utilities.IoC;
 using PaparaProject.Application.Utilities.Results;
@@ -13,25 +14,22 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.Infrastructure.Caching.Redis
 {
-    public class RedisCacheService : ICacheService
+    public class RedisCacheService : IRedisCacheService
     {
         private RedisServer _redisServer;
 
         public RedisCacheService()
         {
             _redisServer = ServiceTool.ServiceProvider.GetService<RedisServer>();
-            //JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            //{
-            //    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            //};
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            };
         }
 
-      
-
-    public void Add(string key, object data)
+        public void Add(string key, object data)
         {
-            string jsonData = JsonConvert.SerializeObject(data.GetType().GetProperty("Result").GetValue(data, null));
-            _redisServer.Database.StringSet(key, jsonData);
+            _redisServer.Database.StringSet(key, JsonConvert.SerializeObject(data));
         }
 
         public bool Any(string key)
@@ -43,12 +41,13 @@ namespace PaparaProject.Infrastructure.Caching.Redis
         {
             if (Any(key))
             {
-               string jsonData = await _redisServer.Database.StringGetAsync(key);
-                APIResult data = JsonConvert.DeserializeObject<APIResult>(jsonData);
+                string jsonData = await _redisServer.Database.StringGetAsync(key);
+                dynamic json = JObject.Parse(jsonData);
+                //APIResult data = JsonConvert.DeserializeObject<APIResult>(json);
                 return new APIResult { 
-                    Data = jsonData,
-                    Message = data.Message,
-                    Success = data.Success 
+                    Data = json.Result,
+                    Message = "",
+                    Success = true 
                 };
             }
 

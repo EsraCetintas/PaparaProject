@@ -16,8 +16,8 @@ namespace PaparaProject.Infrastructure.PaymentService.Model
         public int UserId { get; set; }
         public string CardNo { get; set; }
         public string CVV { get; set; }
-        public string ExpirationDateMonth { get; set; }
-        public string ExpirationDateYear { get; set; }
+        public int ExpirationDateMonth { get; set; }
+        public int ExpirationDateYear { get; set; }
         public string FullName { get; set; }
         public decimal Balance { get; set; }
     }

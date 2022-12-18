@@ -8,11 +8,11 @@ namespace PaparaProject.PaymentAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DocumentController : ControllerBase
+    public class DocumentsController : ControllerBase
     {
         private readonly IDocumentService _documentService;
 
-        public DocumentController(IDocumentService documentService)
+        public DocumentsController(IDocumentService documentService)
         {
             _documentService = documentService;
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PaparaProject.Application.Dtos.CardDto;
 using PaparaProject.Application.Interfaces.Services;
@@ -8,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CardsController : ControllerBase
     {
-        readonly ICardService _cardService;
+        private readonly ICardService _cardService;
         public CardsController(ICardService cardService)
         {
             _cardService = cardService;

@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PaparaProject.WebAPI.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FlatTypesController : ControllerBase
     {
-        readonly IFlatTypeService _service;
+        private readonly IFlatTypeService _service;
 
         public FlatTypesController(IFlatTypeService service)
         {

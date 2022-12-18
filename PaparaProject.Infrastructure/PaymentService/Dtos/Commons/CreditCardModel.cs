@@ -10,8 +10,8 @@ namespace PaparaProject.Infrastructure.PaymentService.Dtos.Commons
     {
         public string CardNo { get; set; }
         public string CVV { get; set; }
-        public string ExpirationDateMonth { get; set; }
-        public string ExpirationDateYear { get; set; }
+        public int ExpirationDateMonth { get; set; }
+        public int ExpirationDateYear { get; set; }
         public string FullName { get; set; }
     }
 }

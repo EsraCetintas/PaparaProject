@@ -18,9 +18,9 @@ namespace PaparaProject.Application.Concrete.Services
 {
     public class AuthService : IAuthService
     {
-        readonly IUserService _userService;
-        readonly IMapper _mapper;
-        readonly ITokenHelper _tokenHelper;
+        private readonly IUserService _userService;
+        private readonly IMapper _mapper;
+        private readonly ITokenHelper _tokenHelper;
 
         public AuthService(IUserService userService, IMapper mapper, ITokenHelper tokenHelper)
         {
@@ -34,13 +34,15 @@ namespace PaparaProject.Application.Concrete.Services
         {
             var user = await _userService.GetByMailAsync(userLoginDto.EMail);
             if (user is null)
-                return new APIResult { Success = false, Message = "User Not Found", Data = null};
+                return new APIResult { Success = false, Message = "User Not Found", Data = null };
 
             if (!HashingHelper.VerifyPasswordHash(userLoginDto.Password, user.PasswordHash, user.PasswordSalt))
                 return new APIResult { Success = false, Message = "Password Invalid", Data = null };
 
-            return new APIResult {Success = true, Message = "Login Succesfull", Data = user };
+            return new APIResult { Success = true, Message = "Login Succesfull", Data = user };
         }
+
+        [ValidationAspect(typeof(RegisterValidator))]
 
         public async Task<APIResult> Register(UserRegisterDto userRegisterDto)
         {
@@ -55,8 +57,8 @@ namespace PaparaProject.Application.Concrete.Services
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
                 IdentityNo = userRegisterDto.IdentityNo,
-                PhoneNumber= userRegisterDto.PhoneNumber,
-                NumberPlate= userRegisterDto.NumberPlate,
+                PhoneNumber = userRegisterDto.PhoneNumber,
+                NumberPlate = userRegisterDto.NumberPlate,
             };
             await _userService.AddAsync(user);
             return new APIResult { Success = true, Message = "Login Succesfull", Data = _mapper.Map<User>(user) };
@@ -72,7 +74,7 @@ namespace PaparaProject.Application.Concrete.Services
 
         public async Task<APIResult> CreateAccessToken(User user)
         {
-            var claims =await _userService.GetClaims(user);
+            var claims = await _userService.GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return new APIResult { Success = true, Message = "Token Succesfull", Data = accessToken };
         }

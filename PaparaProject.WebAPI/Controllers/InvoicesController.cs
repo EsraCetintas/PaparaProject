@@ -19,7 +19,7 @@ namespace PaparaProject.WebAPI.Controllers
     [ApiController]
     public class InvoicesController : ControllerBase
     {
-        readonly IInvoiceService _service;
+        private readonly IInvoiceService _service;
 
         public InvoicesController(IInvoiceService service)
         {
@@ -45,10 +45,10 @@ namespace PaparaProject.WebAPI.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(APIResult))]
         [HttpGet("getallbyflatinvoice")]
-        public async Task<IActionResult> GetAllByFlatInvoiceDtosAsync([FromQuery]int flatId, [FromQuery]bool isPaid)
+        public async Task<IActionResult> GetAllByFlatInvoiceDtosAsync([FromQuery]int flatId)
         {
 
-            var result = await _service.GetAllByFlatInvoiceDtosAsync(flatId, isPaid);
+            var result = await _service.GetAllByFlatInvoiceDtosAsync(flatId);
             return Ok(result);
         }
 

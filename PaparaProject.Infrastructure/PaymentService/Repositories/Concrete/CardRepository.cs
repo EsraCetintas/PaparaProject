@@ -17,12 +17,12 @@ namespace PaparaProject.Infrastructure.PaymentService.Repositories.Concrete
     {
         readonly IMongoDatabase _database;
         private readonly IMongoCollection<Card> _collection;
-        public CardRepository(/*IOptions<MongoSettings> settings*/)
+        public CardRepository()
         {
-            var settings = MongoClientSettings.FromConnectionString("mongodb+srv://EsraCetintas:135790@paymentcluster.ri9rjjy.mongodb.net/?retryWrites=true&w=majority");
+            var settings = MongoClientSettings.FromConnectionString(MongoSettings.MongoConnection);
             settings.ServerApi = new ServerApi(ServerApiVersion.V1);
             var client = new MongoClient(settings);
-            _database = client.GetDatabase("PaymentDb");
+            _database = client.GetDatabase(MongoSettings.Database);
             _collection = _database.GetCollection<Card>("Cards");
         }
 

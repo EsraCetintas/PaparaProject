@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace PaparaProject.WebAPI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MessagesController : ControllerBase
     {
-        readonly IMessageService _service;
+       private readonly IMessageService _service;
 
         public MessagesController(IMessageService service)
         {
