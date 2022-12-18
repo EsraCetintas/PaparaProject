@@ -60,6 +60,8 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        //A separate service is written for payment.
+        //A card can be added to this service by making a request.
         [SecuredOperationAspect("Admin, User")]
         public async Task<APIResult> PayInvoiceAsync(int invoiceId, CreditCardDto creditCardDto)
         {
@@ -89,6 +91,8 @@ namespace PaparaProject.Application.Concrete.Services
             }
         }
 
+        //A separate service is written for payment.
+        //Payment for this service with a card can be made upon request.
         private async Task<APIResult> PostAsync(CardDto cardDto)
         {
             HttpClient httpClient = new HttpClient();

@@ -30,6 +30,8 @@ namespace PaparaProject.Application.Concrete.Services
             return result;
         }
 
+        //A separate service is written for payment.
+        //A card can be added to this service by making a request.
         private async Task<APIResult> AddPostAsync(CardCreateDto cardCreateDto)
         {
             HttpClient httpClient = new HttpClient();
@@ -45,6 +47,8 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = responseContent.Message, Data = null };
         }
 
+        //A separate service is written for payment.
+        //A card can be deleted to this service by making a request.
         private async Task<APIResult> DeletePostAsync(string cardNo)
         {
             HttpClient httpClient = new HttpClient();

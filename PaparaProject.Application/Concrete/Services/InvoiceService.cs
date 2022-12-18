@@ -78,6 +78,8 @@ namespace PaparaProject.Application.Concrete.Services
             return new APIResult { Success = true, Message = "By Pay Filter Invoices Brought", Data = result };
         }
 
+        //MailService is triggered when unpaid invoices are listed.
+        //Users who have not paid with Hangfire will receive a daily e-mail.
         [SecuredOperationAspect("Admin")]
         [CacheAspect]
         public async Task<APIResult> GetAllByPayFilterInvoicesAsync(bool isPaid)
